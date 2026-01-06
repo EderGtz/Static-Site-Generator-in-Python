@@ -1,9 +1,8 @@
 """
 Module used to test the TextNode class on different edge cases 
-on the propertiesand the text types
+on the properties and the text types
 """
 import unittest
-
 from textnode import TextNode, TextType
 
 class TestTextNode(unittest.TestCase):
