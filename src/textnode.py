@@ -1,4 +1,5 @@
 """
+This is an intermediary step betweeen md text and html nodes.
 The classes declared here are the way to represent all different types of
 inline text used in md text. This is to store the information of every
 line to turn them to HTML
