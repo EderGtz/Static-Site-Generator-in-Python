@@ -4,7 +4,8 @@ from md_inline_converter import (
     extract_markdown_images,
     extract_markdown_links,
     split_nodes_image,
-    split_nodes_link
+    split_nodes_link,
+    text_to_textnodes
 )  
 from textnode import TextNode, TextType
 
@@ -175,6 +176,45 @@ class TestInlineMarkdown(unittest.TestCase):
             ],
             new_nodes,)
 
+    #Test the final function, which transforms raw text into TextNode object list
+    def test_text_to_textnodes(self):
+        text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        expected_nodes = [
+            TextNode("This is ", TextType.TEXT),
+            TextNode("text", TextType.BOLD),
+            TextNode(" with an ", TextType.TEXT),
+            TextNode("italic", TextType.ITALIC),
+            TextNode(" word and a ", TextType.TEXT),
+            TextNode("code block", TextType.CODE),
+            TextNode(" and an ", TextType.TEXT),
+            TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+            TextNode(" and a ", TextType.TEXT),
+            TextNode("link", TextType.LINK, "https://boot.dev"),
+        ]
+        self.assertListEqual(expected_nodes, text_to_textnodes(text))
+    
+    def test_text_link_to_textnodes(self):
+        text = "[Link to boot dev](https://www.boot.dev) this was a link"
+        self.assertListEqual(
+            [TextNode("Link to boot dev", TextType.LINK, "https://www.boot.dev"), 
+            TextNode(" this was a link", TextType.TEXT, None)]
+        ,text_to_textnodes(text))
+
+    def test_text_image_to_textnodes(self):
+        text = "![image](https://i.imgur.com/zjjcJKZ.png) this was the img"
+        self.assertListEqual(
+            [
+                TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" this was the img", TextType.TEXT)
+            ],text_to_textnodes(text))
+    
+    def test_text_simple_to_textnodes(self):
+        text = "%This% @is@ ?some? $random$ *text*. +Nothing+ 'else', -nothing- (less)"
+        self.assertListEqual(
+            [
+                TextNode("%This% @is@ ?some? $random$ *text*. +Nothing+ 'else', -nothing- (less)", TextType.TEXT, None)
+            ]
+        , text_to_textnodes(text))
 
 if __name__ == "__main__":
     unittest.main()

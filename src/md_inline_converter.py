@@ -98,3 +98,12 @@ def split_nodes_link(old_nodes):
         if text_to_split != "":
             new_nodes.append(TextNode(text_to_split, TextType.TEXT))
     return new_nodes
+#Converts raw strings of md into a list of TextNode objects
+def text_to_textnodes(text):
+    text_node = TextNode(text, TextType.TEXT)
+    bold_removed = split_nodes_delimiter([text_node],"**", TextType.BOLD)
+    italic_removed = split_nodes_delimiter(bold_removed, "_", TextType.ITALIC)
+    code_removed = split_nodes_delimiter(italic_removed, "`", TextType.CODE)
+    link_removed = split_nodes_link(code_removed)
+    final = split_nodes_image(link_removed)
+    return final
