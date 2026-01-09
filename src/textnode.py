@@ -36,7 +36,7 @@ class TextNode:
 def text_node_to_html_node(text_node):
     text_node_value = text_node.text
 
-    match (text_node.text_type):
+    match(text_node.text_type):
         case TextType.TEXT:
             return LeafNode(None, text_node_value)
         case TextType.BOLD:
