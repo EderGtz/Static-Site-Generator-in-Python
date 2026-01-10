@@ -4,4 +4,4 @@ disable=
     line-too-long,
     trailing-whitespace
 [REPORTS]
-fail-under=8.0
+fail-under=9.0
