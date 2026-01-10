@@ -91,7 +91,7 @@ This is the same paragraph on a new line
     def test_block_to_block_type_code_2(self):
         text = """```Hello there
         ```"""
-        self.assertNotEqual(block_to_block_type(text), BlockType.CODE)
+        self.assertEqual(block_to_block_type(text), BlockType.CODE)
     
     def test_block_to_block_type_code_3(self):
         text = """```
@@ -100,33 +100,23 @@ This is the same paragraph on a new line
         self.assertNotEqual(block_to_block_type(text), BlockType.CODE)
     
     def test_block_to_block_type_quote(self):
-        text = """
-> There was a time
-> When I could sleep at 8 at clock every knight"""
+        text = "> There was a time\n> When I could sleep at 8 at clock every knight"
         self.assertEqual(block_to_block_type(text), BlockType.QUOTE)
     
     def test_block_to_block_type_quote_2(self):
-        text = """> There was a time
-> When I could sleep at 8 at clock every knight"""
+        text = "> There was a time\n> When I could sleep at 8 at clock every knight"
         self.assertEqual(block_to_block_type(text), BlockType.QUOTE)
     
     def test_block_to_block_type_quote_3(self):
-        text = """>There was a time
-> When I could sleep at 8 at clock every knight"""
+        text = ">There was a time\n> When I could sleep at 8 at clock every knight"
         self.assertNotEqual(block_to_block_type(text), BlockType.QUOTE)
     
     def test_block_to_block_type_ul(self):
-        text = """
-- Eggs
-- Bananas
-- Fruits"""
+        text = "- Eggs\n- Bananas\n- Fruits"
         self.assertEqual(block_to_block_type(text), BlockType.UNORDERED_LIST)
 
     def test_block_to_block_type_ol(self):
-        text = """
-1. Eggs
-2. Bananas
-3. Fruits"""
+        text = "1. Eggs\n2. Bananas\n3. Fruits"
         self.assertEqual(block_to_block_type(text), BlockType.ORDERED_LIST)
 
 

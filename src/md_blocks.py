@@ -26,52 +26,37 @@ def markdown_to_blocks(text):
 #Returns the type of block that was introduced
 def block_to_block_type(md_block):
     #heading
-    if md_block.startswith("#"):
-        heading_counter = 0
-        for i in range(len(md_block)):
-            if md_block[i] == "#":
-                heading_counter += 1
-                continue
-            if md_block[i] == " " and 1 <= heading_counter <= 6:
-                return BlockType.HEADING
-            #Avoiding to loop over the whole string if the first non-#
-            #character is not a space
-            break
-    #code
-    if md_block.startswith("```\n") and md_block.endswith("```"):
+    if md_block.startswith(("# ", "## ", "### ", "#### ", "##### ", "###### ")):
+        return BlockType.HEADING
+    #code. Does not consider a \n after the first ```, because you can specify the lenguage there
+    if md_block.startswith("```") and md_block.endswith("```"):
         return BlockType.CODE
     #quote
     block_splitted = md_block.split("\n")
-    is_valid = True
-    for line in block_splitted:
-        if line == "":
-            continue
-        if not line.startswith("> "):
-            is_valid = False
-            break
-    if is_valid is True:
+    if md_block.startswith("> "):
+        for line in block_splitted:
+            if line == "":
+                continue
+            if not line.startswith("> "):
+                return BlockType.PARAGRAPH
         return BlockType.QUOTE
     #unordered list
-    is_valid = True
-    for line in block_splitted:
-        if line == "":
-            continue
-        if not line.startswith("- "):
-            is_valid = False
-            break
-    if is_valid is True:
+    if md_block.startswith("- "):
+        for line in block_splitted:
+            if line == "":
+                continue
+            if not line.startswith("- "):
+                return BlockType.PARAGRAPH
         return BlockType.UNORDERED_LIST
     #ordered list
-    is_valid = True
-    counter = 0
-    for line in block_splitted:
-        if line == "":
-            continue
-        counter += 1
-        if not line.startswith(f"{counter}. "):
-            is_valid = False
-            break
-    if is_valid is True:
+    if md_block.startswith("1. "):
+        counter = 1
+        for line in block_splitted:
+            if line == "":
+                continue
+            if not line.startswith(f"{counter}. "):
+                return BlockType.PARAGRAPH
+            counter += 1
         return BlockType.ORDERED_LIST
     #If none of above are met, is a normal paragraph
     return BlockType.PARAGRAPH
