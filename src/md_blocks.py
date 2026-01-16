@@ -33,11 +33,9 @@ def block_to_block_type(md_block):
         return BlockType.CODE
     #quote
     block_splitted = md_block.split("\n")
-    if md_block.startswith("> "):
+    if md_block.startswith(">"):
         for line in block_splitted:
-            if line == "":
-                continue
-            if not line.startswith("> "):
+            if not line.startswith(">"):
                 return BlockType.PARAGRAPH
         return BlockType.QUOTE
     #unordered list

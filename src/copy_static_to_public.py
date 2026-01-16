@@ -1,6 +1,6 @@
-#This module contains a recursive function that copies all the contents
-#from a source directory to a dest directory. In this case, is used
-#to recreate the public dir of the ssg
+'''This module contains a recursive function that copies all the contents
+from a source directory to a dest directory. In this case, is used
+to recreate the public dir of the ssg'''
 import os
 import shutil
 

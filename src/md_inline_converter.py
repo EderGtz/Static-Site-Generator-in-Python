@@ -1,6 +1,16 @@
 import re
 from textnode import TextNode, TextType
 
+#Converts raw strings of md into a list of TextNode objects
+def text_to_textnodes(text):
+    text_node = TextNode(text, TextType.TEXT)
+    bold_removed = split_nodes_delimiter([text_node],"**", TextType.BOLD)
+    italic_removed = split_nodes_delimiter(bold_removed, "_", TextType.ITALIC)
+    code_removed = split_nodes_delimiter(italic_removed, "`", TextType.CODE)
+    link_removed = split_nodes_link(code_removed)
+    final = split_nodes_image(link_removed)
+    return final
+
 '''
 This function creates TextNodes from raw markdown strings by dividing 
 the md string into multiple lines using a delimiter provided. The function
@@ -98,12 +108,12 @@ def split_nodes_link(old_nodes):
         if text_to_split != "":
             new_nodes.append(TextNode(text_to_split, TextType.TEXT))
     return new_nodes
-#Converts raw strings of md into a list of TextNode objects
-def text_to_textnodes(text):
-    text_node = TextNode(text, TextType.TEXT)
-    bold_removed = split_nodes_delimiter([text_node],"**", TextType.BOLD)
-    italic_removed = split_nodes_delimiter(bold_removed, "_", TextType.ITALIC)
-    code_removed = split_nodes_delimiter(italic_removed, "`", TextType.CODE)
-    link_removed = split_nodes_link(code_removed)
-    final = split_nodes_image(link_removed)
-    return final
+
+"This function extract the h1 header from the md file, and return it"
+def extract_title(md):
+    if not md:
+        raise ValueError("Invalid input")
+    first_line = md.split("\n")[0]
+    if not first_line.startswith("# "):
+        raise Exception("md file should start with a tittle in #")
+    return first_line.strip("# ").rstrip()

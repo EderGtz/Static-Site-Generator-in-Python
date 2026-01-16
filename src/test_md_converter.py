@@ -5,7 +5,8 @@ from md_inline_converter import (
     extract_markdown_links,
     split_nodes_image,
     split_nodes_link,
-    text_to_textnodes
+    text_to_textnodes,
+    extract_title
 )  
 from textnode import TextNode, TextType
 
@@ -215,6 +216,15 @@ class TestInlineMarkdown(unittest.TestCase):
                 TextNode("%This% @is@ ?some? $random$ *text*. +Nothing+ 'else', -nothing- (less)", TextType.TEXT, None)
             ]
         , text_to_textnodes(text))
+    
+    def test_extract_title(self):
+        text = "# Tolkien Fan Club"
+        self.assertEqual("Tolkien Fan Club", extract_title(text))
+    
+    def test_extract_title_larger_input(self):
+        text = """# Tolkien Fan Club 
+![JRR Tolkien sitting](/images/tolkien.png)"""
+        self.assertEqual("Tolkien Fan Club", extract_title(text))
 
 if __name__ == "__main__":
     unittest.main()

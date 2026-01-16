@@ -65,7 +65,7 @@ def quote_to_html_node(text):
     lines = text.split("\n")
     final = []
     for quote in lines:
-        quote = quote.replace("> ", "")
+        quote = quote.replace(">", "  ")
         final.append(quote)
     final = (" ".join(final))
     children = md_inline_to_html(final)
