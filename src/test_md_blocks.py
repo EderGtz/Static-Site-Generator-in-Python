@@ -108,8 +108,8 @@ This is the same paragraph on a new line
         self.assertEqual(block_to_block_type(text), BlockType.QUOTE)
     
     def test_block_to_block_type_quote_3(self):
-        text = ">There was a time\n> When I could sleep at 8 at clock every knight"
-        self.assertNotEqual(block_to_block_type(text), BlockType.QUOTE)
+        text = "> There was a time\n> When I could sleep at 8 at clock every knight"
+        self.assertEqual(block_to_block_type(text), BlockType.QUOTE)
     
     def test_block_to_block_type_ul(self):
         text = "- Eggs\n- Bananas\n- Fruits"
