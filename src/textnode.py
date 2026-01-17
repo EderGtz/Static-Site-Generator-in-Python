@@ -8,6 +8,7 @@ from enum import Enum
 from htmlnode import LeafNode
 
 class TextType(Enum):
+    """Enum representing all supported inline text types."""
     TEXT = "text"
     BOLD = "bold"
     ITALIC = "italic"
@@ -16,7 +17,7 @@ class TextType(Enum):
     IMAGE = "image"
 
 class TextNode:
-#This nodes represent the types of inline text that exist in HTML and MD
+    """Class representing a piece of text with its associated formatting."""
     def __init__(self, text, text_type, url = None):
         self.text = text
         #text_type is a member or TextType enum
@@ -34,6 +35,7 @@ class TextNode:
         return f"TextNode({self.text}, {self.text_type.value}, {self.url})"
     
 def text_node_to_html_node(text_node):
+    """Convert a TextNode instance into a LeafNode for HTML output."""
     text_node_value = text_node.text
 
     match(text_node.text_type):

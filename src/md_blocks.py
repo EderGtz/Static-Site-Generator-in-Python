@@ -1,10 +1,9 @@
-"""This module works over inputs of md documents, and returns lists
-of blocks strings
-"""
+"""Module for parsing and classifying Markdown blocks, returning lists of block str."""
+
 from enum import Enum
 
-#The specific types of md blocks admited
 class BlockType(Enum):
+    """Enum representing supported Markdown block categories."""
     PARAGRAPH = "paragraph"
     HEADING = "heading"
     CODE = "code"
@@ -12,8 +11,8 @@ class BlockType(Enum):
     UNORDERED_LIST = "unordered_list"
     ORDERED_LIST = "ordered list"
 
-#Takes a document and splitted it into blocks of strings
 def markdown_to_blocks(text):
+    """Split raw Markdown text into a list of cleaned block strings."""
     blocks_splitted = text.split("\n\n")
     filtered_blocks = []
     for block in blocks_splitted:
@@ -23,8 +22,8 @@ def markdown_to_blocks(text):
         filtered_blocks.append(block)
     return filtered_blocks
 
-#Returns the type of block that was introduced
 def block_to_block_type(md_block):
+    """Determine the BlockType of a specific Markdown block string."""
     #heading
     if md_block.startswith(("# ", "## ", "### ", "#### ", "##### ", "###### ")):
         return BlockType.HEADING

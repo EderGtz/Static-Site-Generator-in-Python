@@ -1,8 +1,10 @@
+"""Module for converting inline Markdown elements into TextNode objects."""
+
 import re
 from textnode import TextNode, TextType
 
-#Converts raw strings of md into a list of TextNode objects
 def text_to_textnodes(text):
+    """Convert raw text into a list of processed TextNodes."""
     text_node = TextNode(text, TextType.TEXT)
     bold_removed = split_nodes_delimiter([text_node],"**", TextType.BOLD)
     italic_removed = split_nodes_delimiter(bold_removed, "_", TextType.ITALIC)
@@ -11,13 +13,11 @@ def text_to_textnodes(text):
     final = split_nodes_image(link_removed)
     return final
 
-'''
-This function creates TextNodes from raw markdown strings by dividing 
-the md string into multiple lines using a delimiter provided. The function
-also ensures that the md string is valid, and this does not handle (still)
-nested inline elements, like "_hello **there**_"
-'''
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
+    '''This function creates TextNodes from raw markdown strings by dividing 
+    the md string into multiple lines using a delimiter provided. The function
+    also ensures that the md string is valid, and this does not handle (still)
+    nested inline elements, like "_hello **there**_"'''
     new_nodes = []
 
     for node in old_nodes:
@@ -49,17 +49,17 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
 #\[([^\[\]]*)\]: Text inside [] symbols
 #\(([^\(\)]*)\): Text inside () symbols, which is the link of the img
 def extract_markdown_images(text):
+    """Extract image alt text and URLs from Markdown using regex."""
     regex_pattern = r"!\[([^\[\]]*)\]\(([^\(\)]*)\)"
     return re.findall(regex_pattern, text)
 
 def extract_markdown_links(text):
-    #almost exactly the same, but excluding the ! symbol to ensure is not a img
+    """Extract link text and URLs from Markdown using regex."""
     regex_pattern = r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)"
     return re.findall(regex_pattern, text)
 
-#These functions split raw md text into TextNode's based on img and links
-
 def split_nodes_image(old_nodes):
+    """Identify and separate image nodes from text segments."""
     new_nodes = []
     for node in old_nodes:
         if node.text_type != TextType.TEXT:
@@ -87,6 +87,7 @@ def split_nodes_image(old_nodes):
     return new_nodes
 
 def split_nodes_link(old_nodes):
+    """Identify and separate link nodes from text segments."""
     new_nodes = []
     for node in old_nodes:
         if node.text_type != TextType.TEXT:
@@ -109,8 +110,8 @@ def split_nodes_link(old_nodes):
             new_nodes.append(TextNode(text_to_split, TextType.TEXT))
     return new_nodes
 
-"This function extract the h1 header from the md file, and return it"
 def extract_title(md):
+    """Retrieve the first H1 header from a Markdown string."""
     if not md:
         raise ValueError("Invalid input")
     first_line = md.split("\n")[0]

@@ -1,13 +1,13 @@
-"""
-This module converts a full markdown document into a single parent node
-of HTML, including child HTML nodes that represent nested tags
-"""
+"""This module converts a full markdown document into a single parent node
+of HTML, including child HTML nodes that represent nested tags"""
+
 from md_blocks import BlockType, markdown_to_blocks, block_to_block_type
 from htmlnode import ParentNode
 from md_inline_converter import text_to_textnodes
 from textnode import TextNode, TextType, text_node_to_html_node
 
 def markdown_to_html_node(md_document):
+    """Convert a full Markdown document into a single parent HTML node."""
     md_document_blocks = markdown_to_blocks(md_document)
     children = []
     for block in md_document_blocks:
@@ -16,14 +16,15 @@ def markdown_to_html_node(md_document):
     return ParentNode("div", children)
 
 def md_inline_to_html(text):
+    """Convert inline Markdown text into a list of HTML nodes."""
     nodes = text_to_textnodes(text)
     list_of_nodes = []
     for node in nodes:
         list_of_nodes.append(text_node_to_html_node(node))
     return list_of_nodes
 
-#This function takes each block as a simple string
 def create_html_node(text):
+    """Dispatch a Markdown block to its corresponding HTML node creator."""
     block_type = block_to_block_type(text)
     if block_type == BlockType.PARAGRAPH:
         return paragraph_to_html_node(text)
@@ -41,10 +42,12 @@ def create_html_node(text):
         raise ValueError("No compatible format")
 
 def paragraph_to_html_node(text):
+    """Convert a paragraph block into a <p> HTML node."""
     children = md_inline_to_html(text.replace("\n", " "))
     return ParentNode("p", children=children)
 
 def heading_to_html_node(text):
+    """Convert a heading block into an <hX> HTML node."""
     h_counter = 0
     for letter in text:
         if letter != "#":
@@ -54,7 +57,8 @@ def heading_to_html_node(text):
     children = md_inline_to_html(heading_text)
     return ParentNode(f"h{h_counter}", children=children)
 
-def code_to_html_node(text):        
+def code_to_html_node(text):
+    """Convert a code block into <pre><code> HTML nodes."""        
     text = text[4:-3]
     text_node = TextNode(text, TextType.TEXT)
     child = text_node_to_html_node(text_node)
@@ -62,6 +66,7 @@ def code_to_html_node(text):
     return ParentNode("pre", [code])
 
 def quote_to_html_node(text):
+    """Convert a blockquote block into a <blockquote> HTML node."""
     lines = text.split("\n")
     final = []
     for quote in lines:
@@ -73,6 +78,7 @@ def quote_to_html_node(text):
     return ParentNode("blockquote", children=children) 
 
 def unorderedlist_to_html_node(text):
+    """Convert an unordered list block into a <ul> HTML node."""
     children = []
     items = text.split("\n")
     for li_content in items:
@@ -82,6 +88,7 @@ def unorderedlist_to_html_node(text):
     return ParentNode("ul", children)
 
 def orderedlist_to_html_node(text):
+    """Convert an ordered list block into an <ol> HTML node."""
     children = []
     items = text.split("\n")
     for li_content in items:

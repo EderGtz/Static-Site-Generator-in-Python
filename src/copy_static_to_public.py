@@ -1,11 +1,12 @@
 '''This module contains a recursive function that copies all the contents
 from a source directory to a dest directory. In this case, is used
 to recreate the public dir of the ssg'''
+
 import os
 import shutil
 
-#Takes two paths: the source path that will be entirely copied, and a dest path to store it
 def copy_static_dir(source_path_dir, dest_path_dir):
+    """Takes two paths: the source path that will be entirely copied, and a dest path to store it"""
     #This line is util for every recursion call
     if not os.path.exists(dest_path_dir):
         os.mkdir(dest_path_dir)

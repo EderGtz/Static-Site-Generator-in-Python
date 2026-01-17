@@ -1,27 +1,36 @@
-Static Site Generator (SSG) - Python
+# Static Site Generator (SSG) - Python
 
-This is a Static Site Generator built from scratch using Python. It transforms raw Markdown files into a fully functional, SEO-optimized static website. This project work similar to Jekyll, Hugo, or Gatsby.
+This is a Static Site Generator built from scratch using Python. It transforms raw Markdown files into a fully functional static website. This project works similarly to Jekyll, Hugo, or Gatsby.
 
-Instead of relying on existing libraries, I am building the entire engine—from the internal node representation to the complex Markdown parsing logic—to deeply understand how this kind of tools operate under the hood.
- 
- Key Features
+Instead of relying on existing libraries, I built the entire engine—from the internal node representation to the complex Markdown parsing logic—to deeply understand how these tools operate under the hood.
 
-    Custom HTML Engine: Node-based system (HTMLNode, LeafNode, ParentNode) that handles complex nesting and HTML generation.
+## How it Works (The Pipeline)
 
-    Markdown Parser: Full support for inline Markdown (bold, italic, code, links, images) and block-level elements (headings, quotes, lists, code blocks).
+The engine follows a linear data transformation pipeline to ensure data integrity and strict separation of concerns:
 
-    Clean Architecture: Built using Object-Oriented Programming (OOP) and Functional Programming principles for maximum maintainability.
+$$\text{Raw MD} \xrightarrow{\text{Blocks}} \text{List[String]} \xrightarrow{\text{Inline Parser}} \text{List[TextNode]} \xrightarrow{\text{Translator}} \text{HTML Tree} \xrightarrow{\text{to\_html()}} \text{Final Web}$$
 
- Technical Stack & Concepts
+## Key Features
 
-    Language: Python 3
+* **Custom HTML Engine:** A node-based system utilizing `HTMLNode`, `LeafNode`, and `ParentNode` that handles complex nesting through the Composite Pattern.
+* **Markdown Parser:** Full support for inline Markdown (bold, italic, code, links, images) and block-level elements (headings, quotes, lists, code blocks).
+* **Recursive Generation:** Automatically mirrors complex directory structures from source to destination, handling both content and static assets.
+* **Clean Architecture:** Built using Object-Oriented Programming (OOP) and Functional Programming principles for maximum maintainability.
 
-    Architecture: Model-View-Controller (MVC) logic for content separation.
+## Technical Stack & Concepts
 
-    Concepts Applied:
+* **Language:** Python 3.
+* **Architecture:** Separation of concerns using an intermediate representation (`TextNode`) before final HTML rendering.
+* **Concepts Applied:**
+    * **Unit Testing:** Rigorous testing using the `unittest` framework to ensure parsing accuracy and edge-case handling. 71 tests created. 
+    * **Regex (Regular Expressions):** Advanced pattern matching for parsing Markdown syntax into internal nodes.
+    * **Recursion:** Depth-first traversal for both HTML tree rendering and directory processing.
 
-        Unit Testing: Rigorous testing using the unittest framework to ensure parsing accuracy and edge-case handling.
+## Project Structure
 
-        Regex (Regular Expressions): Advanced pattern matching for parsing Markdown syntax into internal nodes.
-
-        Functional Programming: Heavy use of mapping and filtering for data transformation.
+* `main.py`: Entry point that orchestrates the build process.
+* `html_node.py`: Core classes for HTML tree representation.
+* `textnode.py`: Intermediate representation for inline elements.
+* `md_to_html.py`: Logic for converting full Markdown documents into HTML node trees.
+* `md_blocks.py` & `md_inline_converter.py`: Logic for Markdown parsing and classification.
+* `generate_page.py`: File system handling and template integration.
