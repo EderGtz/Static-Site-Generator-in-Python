@@ -12,14 +12,14 @@ DIR_PATH_PUBLIC = "./docs"
 SOURCE_MD = "./content"
 TEMPLATE_HTML = "./template.html"
 DEST_PATH = "./docs"
-
-if len(sys.argv) > 1:
-    basepath = sys.argv[1]
-else:
-    basepath = "/"
+default_basepath = "/"
 
 def main():
     """Orchestrate the site build by copying assets and generating pages."""
+    basepath = default_basepath
+    if len(sys.argv) > 1:
+        basepath = sys.argv[1]
+    
     if os.path.exists(DIR_PATH_PUBLIC):
         shutil.rmtree(DIR_PATH_PUBLIC)
     os.mkdir(DIR_PATH_PUBLIC)

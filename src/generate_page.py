@@ -19,8 +19,8 @@ def generate_page(source_file, template_path, dest_path, basepath):
         html_template = f.read()
         title_replaced = html_template.replace("{{ Title }}", md_title)
         content_replaced = title_replaced.replace("{{ Content }}", md_converted)
-        href_replaced = content_replaced.replace('href="/', f'href="{basepath}')
-        final_html = href_replaced.replace('src="/', f'src="{basepath}')
+        href_replaced = content_replaced.replace('href="/', 'href="' + basepath)
+        final_html = href_replaced.replace('src="/', 'src="' + basepath)
 
     with open(dest_path, "w") as f:
         f.write(final_html)
