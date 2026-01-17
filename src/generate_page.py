@@ -2,25 +2,36 @@ import os
 from md_to_html import markdown_to_html_node
 from md_inline_converter import extract_title
 
-def generate_page(from_path, template_path, dest_path):
-    print(f"Generating page from {from_path} to {dest_path} using {template_path}")
+"Helper function to generate the html files"
+def generate_page(source_file, template_path, dest_path):
+    dest_dir_path = os.path.dirname(dest_path)
+    if not os.path.exists(dest_dir_path):
+        os.makedirs(dest_dir_path, exist_ok=True)
 
-    if not os.path.exists(from_path):
-        raise Exception("The source file does not exists")
-    
-    #In case the given dest does not exists, it is created
-    dest_directories = os.path.dirname(dest_path)
-    if not os.path.exists(dest_directories):
-        os.makedirs(dest_directories, exist_ok=True)
+    with open(source_file, "r") as f:
+            md_file = f.read()
+            md_converted = markdown_to_html_node(md_file).to_html()
+            md_title = extract_title(md_file)
 
-    with open(from_path, "r") as f:
-        md_file = f.read()
-        md_converted = markdown_to_html_node(md_file).to_html()
-        md_title = extract_title(md_file)
+            with open(template_path, "r") as f:
+                html_template = f.read()
+                title_replaced = html_template.replace("{{ Title }}", md_title)
+                final_html = title_replaced.replace("{{ Content }}", md_converted)
 
-        with open(template_path, "r") as f:
-            html_template = f.read()
-            title_replaced = html_template.replace("{{ Title }}", md_title)
-            final_html = title_replaced.replace("{{ Content }}", md_converted)
-            with open(dest_path, "w") as f:
-                f.write(final_html)
+                with open(dest_path, "w") as f:
+                    f.write(final_html)
+
+"Generate all HTTP pages from a given origin path"
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    source_path_content = os.listdir(dir_path_content)
+    for file in source_path_content:
+        source_path = os.path.join(dir_path_content, file)
+        dest_path = os.path.join(dest_dir_path, file)
+        if os.path.isfile(source_path):
+            #This is to change the md extension to html
+            dest_splited = os.path.splitext(dest_path)
+            directory = dest_splited[0]
+            dest_path = directory + ".html"
+            generate_page(source_path, template_path, dest_path)
+        else:
+            generate_pages_recursive(source_path, template_path, dest_path)
