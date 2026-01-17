@@ -12,11 +12,11 @@ DIR_PATH_PUBLIC = "./docs"
 SOURCE_MD = "./content"
 TEMPLATE_HTML = "./template.html"
 DEST_PATH = "./docs"
-default_basepath = "/"
+DEFAULT_BASEPATH = "/"
 
 def main():
     """Orchestrate the site build by copying assets and generating pages."""
-    basepath = default_basepath
+    basepath = DEFAULT_BASEPATH
     if len(sys.argv) > 1:
         basepath = sys.argv[1]
     
