@@ -1,16 +1,22 @@
 """Entry point for the Static Site Generator (SSG)."""
 
 import os
+import sys
 import shutil
 from copy_static_to_public import copy_static_dir
 from generate_page import generate_pages_recursive
 
 DIR_PATH_STATIC = "./static"
-DIR_PATH_PUBLIC = "./public"
+DIR_PATH_PUBLIC = "./docs"
 
 SOURCE_MD = "./content"
 TEMPLATE_HTML = "./template.html"
-DEST_PATH = "./public"
+DEST_PATH = "./docs"
+
+if len(sys.argv) > 1:
+    basepath = sys.argv[1]
+else:
+    basepath = "/"
 
 def main():
     """Orchestrate the site build by copying assets and generating pages."""
@@ -18,7 +24,7 @@ def main():
         shutil.rmtree(DIR_PATH_PUBLIC)
     os.mkdir(DIR_PATH_PUBLIC)
     copy_static_dir(DIR_PATH_STATIC, DIR_PATH_PUBLIC)
-    generate_pages_recursive(SOURCE_MD, TEMPLATE_HTML, DEST_PATH)
+    generate_pages_recursive(SOURCE_MD, TEMPLATE_HTML, DEST_PATH, basepath)
 
 if __name__ == "__main__":
     main()

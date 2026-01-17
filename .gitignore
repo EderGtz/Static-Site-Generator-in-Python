@@ -1,4 +1,1 @@
 __pycache__/
-
-#Added public because it is deleted and created every time main.py is executed
-/public
