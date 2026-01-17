@@ -8,7 +8,7 @@ Instead of relying on existing libraries, I built the entire engine—from the i
 
 The engine follows a linear data transformation pipeline to ensure data integrity and strict separation of concerns:
 
-$$\text{Raw MD} \xrightarrow{\text{Blocks}} \text{List[String]} \xrightarrow{\text{Inline Parser}} \text{List[TextNode]} \xrightarrow{\text{Translator}} \text{HTML Tree} \xrightarrow{\text{to\_html()}} \text{Final Web}$$
+$$\text{Raw MD} \xrightarrow{\text{Blocks}} \text{List[String]} \xrightarrow{\text{Inline Parser}} \text{List[TextNode]} \xrightarrow{\text{Translator}} \text{HTML Tree} \xrightarrow{\text{to\textunderscore html()}} \text{Final Web}$$
 
 ## Key Features
 
