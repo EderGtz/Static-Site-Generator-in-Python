@@ -1,4 +1,4 @@
-# Static Site Generator (SSG) - Python
+# PyWeaver: Static Asset Generator
 
 This is a Static Site Generator built from scratch using Python. It transforms raw Markdown files into a fully functional static website. This project works similarly to Jekyll, Hugo, or Gatsby.
 
