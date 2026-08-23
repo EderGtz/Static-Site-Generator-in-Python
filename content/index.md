@@ -61,4 +61,4 @@ Computer Science Core: Advanced OOP & Functional Programming (Python), Algorithm
 - [LinkedIn](https://linkedin.com/in/edergutierrezc)
 
 
-This site was generated with a custom-built [static site generator](https://github.com/EderGtz/SSG) written in Python.
+This site was generated with a custom-built [static site generator](https://github.com/EderGtz/Static-Site-Generator-in-Python) written in Python.

@@ -166,4 +166,4 @@ python3 src/main.py /my-site/
 
 ## Repository
 
-[github.com/EderGtz/SSG](https://github.com/EderGtz/SSG)
+[github.com/EderGtz/SSG](https://github.com/EderGtz/Static-Site-Generator-in-Python)
