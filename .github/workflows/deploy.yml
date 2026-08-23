@@ -1,0 +1,31 @@
+name: Build and Deploy to Root Domain
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build static site
+        run: |
+          python3 src/main.py "/"
+
+      - name: Deploy to EderGtz.github.io
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ secrets.DEPLOY_TOKEN }}
+          external_repository: EderGtz/EderGtz.github.io
+          publish_branch: main
+          publish_dir: ./docs
