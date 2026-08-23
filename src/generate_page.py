@@ -33,6 +33,9 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, bas
         source_path = os.path.join(dir_path_content, file)
         dest_path = os.path.join(dest_dir_path, file)
         if os.path.isfile(source_path):
+            # Only process .md files
+            if not source_path.endswith('.md'):
+                continue
             #This is to change the md extension to html
             dest_splited = os.path.splitext(dest_path)
             directory = dest_splited[0]

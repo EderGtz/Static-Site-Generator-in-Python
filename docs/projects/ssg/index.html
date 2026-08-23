@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Static Site Generator (SSG)</title>
+    <link href="/Static-Site-Generator-in-Python/index.css" rel="stylesheet" />
+  </head>
+  <body>
+    <nav>
+      <a href="/Static-Site-Generator-in-Python/">Home</a>
+      <a href="/Static-Site-Generator-in-Python/projects">Projects</a>
+      <a href="/Static-Site-Generator-in-Python/contact">Contact</a>
+    </nav>
+    <main><div><h1>Static Site Generator (SSG)</h1><p><a href="/Static-Site-Generator-in-Python/">< Back Home</a></p><p><a href="/Static-Site-Generator-in-Python/projects">< Projects</a></p><p>A custom-built static site generator written in Python from scratch. No third-party SSG libraries. Built to deeply understand how tools like Jekyll, Hugo, and Gatsby work under the hood.</p><h2>Overview</h2><p>SSG is a pure-Python static site generator that transforms a directory of Markdown files and static assets into a complete HTML website. The entire engine — from the internal node representation to the Markdown parsing logic — was built from the ground up as a learning project for the Boot.dev backend course.</p><h2>Pipeline</h2><p>The engine follows a linear data transformation pipeline with strict separation of concerns:</p><pre><code>Markdown Files
+      |
+      v
+Block Parser (md_blocks.py)
+  splits raw text into blocks:
+  headings, paragraphs, lists,
+  code blocks, blockquotes
+      |
+      v
+Inline Converter (md_inline_converter.py)
+  processes inline elements:
+  bold, italic, code spans,
+  links, images
+      |
+      v
+TextNode IR (textnode.py)
+  intermediate representation
+  of inline elements before
+  final HTML rendering
+      |
+      v
+HTML Node Tree (htmlnode.py)
+  Composite Pattern node
+  hierarchy: LeafNode,
+  ParentNode for nested HTML
+      |
+      v
+Page Generator (generate_page.py)
+  applies template, writes
+  .html files, recurses
+  directory tree
+      |
+      v
+docs/ (output)
+</code></pre><h2>Key Components</h2><h3>HTML Node Engine</h3><p>A node-based system using the Composite Pattern to represent HTML trees.</p><ul><li><b>HTMLNode</b> — base class with tag, value, children, and properties</li><li><b>LeafNode</b> — terminal nodes with no children</li><li><b>ParentNode</b> — container nodes that hold children and recursively render them</li></ul><p>This design handles arbitrary nesting depth cleanly and is testable in isolation.</p><h3>Markdown Block Parser</h3><p>Splits raw Markdown text into classified blocks using regex:</p><ul><li>Headings (ATX <code>#</code> and setext underline styles)</li><li>Paragraphs</li><li>Unordered and ordered lists</li><li>Code blocks (fenced with triple backticks)</li><li>Blockquotes</li><li>Inline HTML</li></ul><h3>Inline Markdown Converter</h3><p>Processes inline formatting within block text:</p><ul><li>Bold (<b>text</b>)</li><li>Italic (<i>text</i>)</li><li>Inline code (<code>code</code>)</li><li>Links</li><li>Images</li></ul><p>Uses an intermediate TextNode representation before converting to HTML nodes.</p><h3>Page Generator</h3><ul><li>Reads a Markdown file and converts it to an HTML node tree</li><li>Loads an HTML template with <code>{{ Title }}</code> and <code>{{ Content }}</code> placeholders</li><li>Performs basepath replacement for asset hrefs and srcs</li><li>Writes the final <code>.html</code> file to the output directory</li><li>Recursively processes entire directory trees, mirroring the source structure</li></ul><h3>Static Asset Copier</h3><p>Copies the <code>static/</code> directory (CSS, images, etc.) into the output <code>docs/</code> directory so assets are served alongside generated pages.</p><h2>Project Structure</h2><pre><code>SSG/
+├── src/
+│   ├── main.py                 # entry point — orchestrates the build
+│   ├── htmlnode.py             # HTML node classes (LeafNode, ParentNode)
+│   ├── textnode.py             # intermediate TextNode representation
+│   ├── md_to_html.py           # Markdown to HTML node tree conversion
+│   ├── md_blocks.py            # block-level Markdown parsing
+│   ├── md_inline_converter.py  # inline Markdown processing
+│   ├── generate_page.py        # page generation + recursive directory walk
+│   └── copy_static_to_public.py  # static asset copying
+├── content/                    # Markdown source files
+├── static/                     # CSS, images, and other assets
+├── template.html               # HTML template with {{ Title }} / {{ Content }}
+├── docs/                       # generated output (git-ignored)
+└── main.sh / build.sh          # shell wrappers to run the generator
+</code></pre><h2>Testing</h2><p>The project includes <b>71 unit tests</b> built with Python's <code>unittest</code> framework, covering:</p><ul><li>HTML node rendering (LeafNode, ParentNode, nested trees)</li><li>TextNode conversion and equality</li><li>Markdown block classification</li><li>Inline Markdown parsing (bold, italic, code, links, images)</li><li>End-to-end Markdown-to-HTML conversion</li></ul><p>Tests ensure parsing accuracy and edge-case handling across the entire pipeline.</p><h2>Technical Concepts Applied</h2><ul><li><b>Composite Pattern</b> — recursive HTML tree rendering via node hierarchy</li><li><b>Regex (Regular Expressions)</b> — advanced pattern matching for Markdown syntax</li><li><b>Recursion</b> — depth-first directory traversal and HTML tree generation</li><li><b>Separation of Concerns</b> — intermediate TextNode representation decouples parsing from rendering</li><li><b>Object-Oriented + Functional</b> — OOP for node structures, functional style for transformation pipelines</li></ul><h2>Usage</h2><p>Build the site from <code>content/</code> to <code>docs/</code>:</p><pre><code>python3 src/main.py
+</code></pre><p>Or use the shell wrapper:</p><pre><code>./main.sh
+</code></pre><p>Serve the output locally:</p><pre><code>cd docs && python3 -m http.server 8888
+</code></pre><p>The generator accepts an optional basepath argument for deploying to subdirectories:</p><pre><code>python3 src/main.py /my-site/
+</code></pre><h2>Repository</h2><p><a href="https://github.com/EderGtz/SSG">github.com/EderGtz/SSG</a></p></div></main>
+  </body>
+</html>

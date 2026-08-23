@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GTFS-Realtime Stream Engine</title>
+    <link href="/Static-Site-Generator-in-Python/index.css" rel="stylesheet" />
+  </head>
+  <body>
+    <nav>
+      <a href="/Static-Site-Generator-in-Python/">Home</a>
+      <a href="/Static-Site-Generator-in-Python/projects">Projects</a>
+      <a href="/Static-Site-Generator-in-Python/contact">Contact</a>
+    </nav>
+    <main><div><h1>GTFS-Realtime Stream Engine</h1><p><a href="/Static-Site-Generator-in-Python/">< Back Home</a></p><p><a href="/Static-Site-Generator-in-Python/projects">< Projects</a></p><p>A real-time transit telemetry pipeline that decodes MBTA GTFS-Realtime feeds, validates vehicle position data, and streams normalized events through Apache Kafka for downstream analytics.</p><h2>Overview</h2><p>The GTFS-Realtime Stream Engine is an event-driven pipeline that consumes raw GTFS-Realtime protobuf data from the MBTA (Massachusetts Bay Transportation Authority) vehicle positions feed. It decodes the protobuf messages, validates telemetry integrity, enriches the data with GTFS stop metadata and static schedule references, and publishes clean normalized events to Kafka topics for consumption by analytics and monitoring systems.</p><h2>Architecture</h2><pre><code>MBTA GTFS-Realtime Feed
+        |
+        v
++-----------------------------+
+|  Protobuf Decoder           |
+|  (TypeScript —             |
+|   gtfs-realtime-bindings)  |
++-----------------------------+
+        |
+        v
++-----------------------------+
+|  Telemetry Validator        |
+|  (checksum, monotonicity,  |
+|   freshness checks)         |
++-----------------------------+
+        |
+        v
++-----------------------------+
+|  Enricher                   |
+|  (GTFS-Static stop lookup,  |
+|   trip metadata)            |
++-----------------------------+
+        |
+        v
++-----------------------------+
+|  Kafka Producer             |
+|  (normalized JSON events    |
+|   -> topic)                 |
++-----------------------------+
+        |
+        v
++-----------------------------+
+|  DuckDB Analytics           |
+|  (deduplication, data-      |
+|   quality, temporal val)    |
++-----------------------------+
+</code></pre><h2>Key Components</h2><h3>Protobuf Decoding</h3><p>Uses the official <code>gtfs-realtime-bindings</code> library to decode raw GTFS-Realtime binary data into structured JavaScript objects. Handles <code>VehiclePosition</code>, <code>TripUpdate</code>, and <code>Alert</code> message types.</p><h3>Telemetry Validation</h3><p>Validates incoming telemetry against sanity checks:</p><ul><li>Position coordinate bounds (latitude/longitude within service area)</li><li>Speed and heading plausibility</li><li>Timestamp monotonicity (no backward clock jumps)</li><li>Record freshness (stale vehicles flagged and filtered)</li></ul><h3>Enrichment</h3><p>Joins vehicle telemetry against GTFS-Static reference data:</p><ul><li>Stop IDs → stop names and geospatial coordinates</li><li>Route IDs → route short names and types</li><li>Trip IDs → scheduled service patterns</li></ul><h3>Kafka Publishing</h3><p>Normalized JSON events are published to Kafka topics with schema-compatible keys. Supports multiple topic strategies (raw, validated, enriched) for different consumer needs.</p><h3>DuckDB Analytics</h3><p>Uses DuckDB for offline analysis of the telemetry stream:</p><ul><li>Deduplication of repeated position updates</li><li>Data-quality metrics (completeness, freshness, accuracy)</li><li>Temporal validation (route adherence, schedule deviation)</li></ul><h2>Technology Stack</h2><p><b>Ingestion & decoding:</b> TypeScript, Node.js</p><p><b>Stream transport:</b> Apache Kafka</p><p><b>Analytics:</b> DuckDB, Python</p><p><b>Containerization:</b> Docker, Docker Compose</p><p><b>Testing:</b> Vitest</p><h2>Testing</h2><p>The project includes a comprehensive Vitest test suite covering:</p><ul><li>Protobuf decoding correctness</li><li>Validation rule enforcement</li><li>Kafka producer/consumer integration</li><li>Polling and topic setup logic</li></ul><h2>Repository</h2><p><a href="https://github.com/EderGtz/GTFS-Realtime-Stream-Engine">github.com/EderGtz/GTFS-Realtime-Stream-Engine</a></p></div></main>
+  </body>
+</html>

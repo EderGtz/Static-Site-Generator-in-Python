@@ -6,12 +6,14 @@ from textnode import TextNode, TextType
 def text_to_textnodes(text):
     """Convert raw text into a list of processed TextNodes."""
     text_node = TextNode(text, TextType.TEXT)
-    bold_removed = split_nodes_delimiter([text_node],"**", TextType.BOLD)
+    # Extract links and images FIRST. Their URLs must stay intact
+    # so underscores inside URLs are never consumed by delimiter splitting.
+    link_removed = split_nodes_link([text_node])
+    image_removed = split_nodes_image(link_removed)
+    bold_removed = split_nodes_delimiter(image_removed, "**", TextType.BOLD)
     italic_removed = split_nodes_delimiter(bold_removed, "_", TextType.ITALIC)
     code_removed = split_nodes_delimiter(italic_removed, "`", TextType.CODE)
-    link_removed = split_nodes_link(code_removed)
-    final = split_nodes_image(link_removed)
-    return final
+    return code_removed
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     '''This function creates TextNodes from raw markdown strings by dividing 

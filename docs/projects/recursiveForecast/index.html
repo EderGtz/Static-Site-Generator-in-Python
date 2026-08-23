@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>RecursiveForecast -- Python vs. R Comparative Study</title>
+    <link href="/Static-Site-Generator-in-Python/index.css" rel="stylesheet" />
+  </head>
+  <body>
+    <nav>
+      <a href="/Static-Site-Generator-in-Python/">Home</a>
+      <a href="/Static-Site-Generator-in-Python/projects">Projects</a>
+      <a href="/Static-Site-Generator-in-Python/contact">Contact</a>
+    </nav>
+    <main><div><h1>RecursiveForecast -- Python vs. R Comparative Study</h1><p><a href="/Static-Site-Generator-in-Python/">< Back Home</a></p><p><a href="/Static-Site-Generator-in-Python/projects">< Projects</a></p><p>An analytical project comparing recursive forecasting models implemented in both Python and R. Developed as part of a homework at UVEG, it implements the Exponential Smoothing algorithm to predict 2020 values from historical 2015-2019 data across 10 economic indicators.</p><h2>Overview</h2><p>RecursiveForecast implements exponential smoothing for time-series forecasting in two languages (Python and R) and compares the results. The core challenge is applying the smoothing formula recursively over every value in a column to produce a truly accumulated forecast, rather than using only the last value as a pivot point.</p><p>The project covers 10 indicators (HC, HI, HT, HTP, U6E, UI6E, UCHE, UITI, UIFH, UTC6E) and produces comparative plots showing the forecast trends.</p><h2>The Algorithm</h2><p>Exponential smoothing smooths time-series data using an exponential window function. The formula applied is:</p><p><code> St = alpha * Xt-1 + (1 - alpha) * St-1 </code></p><p>Where:</p><ul><li><b>St:</b> Forecast for the current period</li><li><b>alpha:</b> Smoothing factor (set to 0.5 in this project)</li><li><b>Xt-1:</b> Actual value of the previous period</li><li><b>St-1:</b> Forecast of the previous period</li></ul><p>The recursion is the key part: each forecast depends on the previous forecast, creating a chain that accumulates the smoothing effect across the entire series.</p><h2>Sample Data</h2><p>Original data (first 5 rows of 2015-2019):</p><pre><code>      HC      HI     HT    HTP    U6E   UI6E   UCHE   UITI   UIFH   UTC6E
+1  44.900  39.200  93.50  43.70  51.30  57.40  51.30  12.80  29.10  71.50
+2  45.600  47.000  93.10  52.10  47.00  59.50  52.20  14.70  20.50  73.60
+3  45.400  50.900  93.20  49.50  45.30  63.90  46.80  20.40  16.70  72.20
+4  44.900  52.900  92.90  47.30  45.00  65.80  46.70  23.70  13.40  73.50
+5  44.300  56.400  92.50  45.90  43.00  70.10  44.60  27.20  10.70  75.10
+</code></pre><p>Forecasted values for 2020 (6th row):</p><pre><code>      HC      HI     HT    HTP    U6E   UI6E   UCHE   UITI   UIFH   UTC6E
+6  44.706  53.175  92.79  46.95  44.56  66.79  46.29  23.79  13.89  74.02
+</code></pre><h2>Comparative Implementation</h2><h3>Python Implementation</h3><ul><li><b>Paradigm:</b> Imperative and procedural</li><li><b>Key libraries:</b> numpy for data handling, matplotlib for visualization</li><li><b>Approach:</b> Explicit state management with granular control over the iteration process. Each step of the recursion is handled explicitly, making the logic easy to trace and debug.</li></ul><p>The Python version produces modern, customizable graphical output and is more versatile for extending the analysis to additional indicators or smoothing variants.</p><h3>R Implementation</h3><ul><li><b>Paradigm:</b> Functional programming</li><li><b>Key libraries:</b> purrr (tidyverse) for functional operations, base graphics for plotting</li><li><b>Approach:</b> Uses <code>reduce</code> to synthesize the forecasting logic into a compact and expressive syntax. The functional style maps naturally onto the recursive formula.</li></ul><p>The R implementation offers a concise statistical approach that is well-suited to the academic context of the project.</p><h2>Visualization</h2><p>The project generates comparative plots for all 10 indicators showing both the historical data (2015-2019) and the forecasted 2020 values. While the R implementation provides a concise statistical view, the Python version produces more customizable and visually refined output.</p><h2>Technology Stack</h2><p><b>Languages:</b> Python, R</p><p><b>Python libraries:</b> numpy, matplotlib</p><p><b>R libraries:</b> purrr (tidyverse), base graphics</p><p><b>Techniques:</b> Exponential Smoothing, Time-Series Forecasting, Recursive Computation</p><p><b>Context:</b> UVEG Reto 4 -- academic data analysis project</p><h2>Repository</h2><p><a href="https://github.com/EderGtz/RecursiveForecast---Python-vs.-R">github.com/EderGtz/RecursiveForecast---Python-vs.-R</a></p></div></main>
+  </body>
+</html>
