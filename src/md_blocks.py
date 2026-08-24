@@ -10,6 +10,8 @@ class BlockType(Enum):
     QUOTE = "quote"
     UNORDERED_LIST = "unordered_list"
     ORDERED_LIST = "ordered list"
+    RAW_HTML = "raw_html"
+    HR = "hr"
 
 def markdown_to_blocks(text):
     """Split raw Markdown text into a list of cleaned block strings."""
@@ -55,5 +57,13 @@ def block_to_block_type(md_block):
                 return BlockType.PARAGRAPH
             counter += 1
         return BlockType.ORDERED_LIST
+    # raw HTML block — pass through unchanged
+    import re as _re
+    if _re.match(r'^\s*<[a-zA-Z][^>]*>', md_block):
+        return BlockType.RAW_HTML
     #If none of above are met, is a normal paragraph
+    # horizontal rule — --- or *** or ___ on its own line
+    stripped = md_block.strip()
+    if stripped in ("---", "***", "___"):
+        return BlockType.HR
     return BlockType.PARAGRAPH

@@ -36,13 +36,18 @@ class LeafNode(HTMLNode):
     def __init__(self,tag, value, props = None):
         super().__init__(tag=tag, value=value, props=props)
 
+    VOID_ELEMENTS = frozenset({"hr", "br", "img", "input", "meta", "link"})
+
     def to_html(self):
         """Render the leaf node as a raw string or HTML tag."""
         if self.value is None:
             raise ValueError("All leaf nodes must have a value")
         if self.tag is None:
-            return self.value #returned as raw text
-        return f"<{self.tag}{self.properties_to_html()}>{self.value}</{self.tag}>"
+            return self.value
+        props = self.properties_to_html()
+        if self.tag in self.VOID_ELEMENTS:
+            return f"<{self.tag}{props} />"
+        return f"<{self.tag}{props}>{self.value}</{self.tag}>"
     
     def __repr__(self):
         return f"HTMLNode({self.tag}, {self.value}, {self.properties_to_html()})"  
