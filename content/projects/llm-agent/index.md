@@ -1,7 +1,6 @@
 ---
 
 description: CLI agent leveraging Gemini's function-calling API to autonomously read, write, and execute files on a local filesystem — an experimental CLI coding agent.
-
 ---
 
 # LLM Code Agent CLI
