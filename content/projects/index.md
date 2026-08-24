@@ -8,7 +8,7 @@ title: Projects — Eder Gutiérrez
 
 [< Back Home](/)
 
-A selection of projects demonstrating backend engineering, data pipelines, and tooling.
+A selection of systems, tools, and data projects built to solve concrete engineering problems.
 
 ## [GTFS-Realtime Stream Engine](/projects/gtfs-realtime-stream-engine)
 
@@ -22,7 +22,7 @@ A selection of projects demonstrating backend engineering, data pipelines, and t
 
 ## [Autonomous AI Code Agent CLI](/projects/llm-agent)
 
-**Tier 2 — Systems and tooling.** CLI agent leveraging Gemini's function-calling API to autonomously read, write, and execute files. Implements an iterative agent loop with tool dispatch, working-directory sandboxing, and configurable iteration limits to prevent runaway executions.
+**Tier 2 — Systems and tooling.** CLI agent leveraging Gemini's function-calling API to read, write, and execute files through an iterative tool-calling loop. Implements an iterative agent loop with tool dispatch, working-directory sandboxing, and configurable iteration limits to prevent runaway executions.
 
 **Stack:** Python, LLM APIs, Bash, Git
 
@@ -30,9 +30,9 @@ A selection of projects demonstrating backend engineering, data pipelines, and t
 
 ---
 
-## [Static Site Generator (SSG)](/projects/ssg)
+## [PyWeaver — Static Site Generator](/projects/ssg)
 
-**Tier 2 — Systems and tooling.** Custom-built Python SSG with a node-based HTML engine (Composite Pattern), custom Markdown parsing (block-level + inline syntax), recursive directory generation, and 71 unit tests. Built from scratch as part of the Boot.dev backend course to understand how tools like Jekyll and Hugo operate under the hood.
+**Tier 2 — Systems and tooling.** A from-scratch Python static site generator with a node-based HTML engine (Composite Pattern), custom Markdown parsing (block-level + inline syntax), recursive directory generation, and 71 unit tests. Built as part of the Boot.dev backend course to understand how static site generators work internally.
 
 This portfolio is generated with the same SSG.
 
@@ -44,7 +44,7 @@ This portfolio is generated with the same SSG.
 
 ## [CipherHook (OS-Level File Encryption)](/projects/cipherhook)
 
-**Tier 3 — Earlier work.** An OS-level file encryption daemon built in Python. It utilizes the watchdog library to monitor directory events in real-time and applies cryptographic operations using pycryptodomex to automatically secure files. Combines AES-256-EAX symmetric encryption with RSA-2048 asymmetric key wrapping for hybrid security.
+**Tier 3 — Earlier work.** Earlier work. An OS-level file encryption daemon built in Python. It uses watchdog to react to filesystem events and PyCryptodome to encrypt files using AES-256-EAX, with RSA-2048 used to wrap the symmetric session key.
 
 **Stack:** Python, Watchdog, PyCryptodome, AES-256-EAX, RSA-2048
 
