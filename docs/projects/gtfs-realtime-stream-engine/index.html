@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GTFS-Realtime Stream Engine</title>
+    <meta name="description" content="Backend engineer building event-driven systems, integrations, and data-intensive applications." />
+    <link rel="canonical" href="https://edergtz.github.io/projects/gtfs-realtime-stream-engine/" />
+    <meta property="og:title" content="GTFS-Realtime Stream Engine" />
+    <meta property="og:image" content="" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="GTFS-Realtime Stream Engine" />
+    <meta name="twitter:description" content="Backend engineer building event-driven systems, integrations, and data-intensive applications." />
+    <meta name="twitter:image" content="" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link href="/index.css" rel="stylesheet" />
+  </head>
+  <body>
+    <nav>
+      <div class="nav-left">
+        <a href="/">Home</a>
+        <a href="/projects">Projects</a>
+        <a href="/experience">Experience</a>
+        <a href="/contact">Contact</a>
+      </div>
+      <div class="nav-right">
+        <a href="https://github.com/EderGtz">GitHub</a>
+        <a href="/resume/Eder_Gutierrez_Resume.pdf">Resume</a>
+      </div>
+    </nav>
+    <main><section class="slot default"><div><p>description: Event-driven pipeline that decodes raw MBTA GTFS-Realtime vehicle-position protobufs, validates telemetry, and publishes normalized events to Apache Kafka. Enriches telemetry with GTFS stop metadata and uses DuckDB for deduplication, data-quality analysis, and temporal validation.</p><hr /><h1>GTFS-Realtime Stream Engine</h1><p><a href="/">< Back Home</a></p><p><a href="/projects">< Projects</a></p><p>A real-time transit telemetry pipeline that decodes MBTA GTFS-Realtime feeds, validates vehicle position data, and streams normalized events through Apache Kafka for downstream analytics.</p><h2>Overview</h2><p>The GTFS-Realtime Stream Engine is an event-driven pipeline that consumes raw GTFS-Realtime protobuf data from the MBTA (Massachusetts Bay Transportation Authority) vehicle positions feed. It decodes the binary protobuf messages, validates telemetry integrity, and publishes clean normalized events to Kafka topics for consumption by analytics and monitoring systems.</p><p>The pipeline is built in two stages: a TypeScript ingestion service that handles decoding, validation, and Kafka publishing, and a Python analytics engine using DuckDB that performs deduplication, data-quality analysis, and temporal validation on the captured stream.</p><h2>Architecture</h2><pre><code>MBTA GTFS-Realtime Feed
+       |
+       v
++-----------------------+
+|  INPUT                |
+|  Protobuf Decoder     |
+|  (TypeScript)         |
+|  gtfs-realtime-      |
+|  bindings             |
++-----------------------+
+       |
+       v
++-----------------------+
+|  PROCESSING           |
+|  Telemetry Validator  |
+|  - coordinate bounds  |
+|  - finite checks      |
+|  - timestamp parse    |
+|  - vehicle ID present |
++-----------------------+
+       |
+       v
++-----------------------+
+|  STREAMING            |
+|  Kafka Producer       |
+|  raw.vehicle-positions|
+|  4 partitions         |
+|  KRaft mode           |
+|  keyed by vehicle ID  |
++-----------------------+
+       |
+       v
++-----------------------+
+|  ANALYTICS            |
+|  DuckDB               |
+|  - deduplication      |
+|  - data quality       |
+|  - temporal validation|
+|  - stop matching      |
++-----------------------+
+</code></pre><h2>Key Components</h2><h3>Protobuf Decoding</h3><p>Uses the official <code>gtfs-realtime-bindings</code> library to decode raw GTFS-Realtime binary data into structured JavaScript objects. The decoder handles the <code>FeedMessage</code> envelope and extracts the <code>entity</code> array, which may contain <code>VehiclePosition</code>, <code>TripUpdate</code>, and <code>Alert</code> message types.</p><p>The decoder is tested against a real captured MBTA feed fixture and rejects garbage input with a thrown error rather than silently returning junk.</p><h3>Telemetry Validation</h3><p>Validates incoming telemetry against sanity checks before publishing:</p><ul><li>Position coordinate bounds (latitude/longitude within valid geographical ranges)</li><li>Numeric finiteness checks (rejects NaN, undefined, null coordinates)</li><li>Timestamp parseability (must produce a valid Date)</li><li>Vehicle ID presence (entities without a vehicle ID are skipped and counted)</li></ul><p>The validator does not check speed or heading plausibility — those fields are often absent in the MBTA feed and are not reliable enough to gate on.</p><h3>Kafka Publishing</h3><p>Normalized JSON events are published to the <code>raw.vehicle-positions</code> Kafka topic with the vehicle ID as the message key (partitioning by vehicle). Each message includes:</p><ul><li>The validated telemetry fields (vehicle ID, trip ID, route ID, location, timestamp, bearing, speed, stop fields, status)</li><li><code>agency id</code> set to "mbta" (fixed for now; multi-agency support is future work)</li><li><code>ingested at</code> timestamp for freshness tracking</li></ul><p>The producer is configured with idempotency enabled. Topic creation with 4 partitions is handled automatically on startup.</p><h3>DuckDB Analytics</h3><p>The analytics engine consumes the Kafka stream and performs offline analysis:</p><ul><li><b>Deduplication</b> on <code>(vehicle ID, timestamp)</code> — 22.4% of raw pings are duplicates (same vehicle, same timestamp), which MongoDB's unique index would reject at write time anyway</li><li><b>Data quality</b> — null rate analysis by route, <code>current status</code> distribution, field completeness</li><li><b>Temporal validation</b> — gap analysis between consecutive pings per vehicle, silent-vehicle detection</li><li><b>Stop matching</b> — 99.5% of pings already carry a <code>stop ID</code> from the MBTA feed; the remaining 0.5% concentrate in Shuttle-Generic routes with no schedule data</li></ul><h2>Problems Solved</h2><h3>Data validation</h3><p>The MBTA feed contains entities without positions, without vehicle IDs, and with unparseable timestamps. The validator filters these out and counts them, so the pipeline publishes only telemetry that can be used downstream.</p><h3>Duplicate events</h3><p>22.4% of captured pings are duplicates — the same vehicle reporting the same timestamp multiple times within a single 15-second poll cycle. Deduplication on <code>(vehicle ID, timestamp)</code> before analysis prevents these from creating false zero-second gaps.</p><h3>Temporal consistency</h3><p>Gap analysis between consecutive pings per vehicle reveals the real update frequency. The median gap is ~16 seconds, p99 is 62 seconds (after excluding a 10-minute infrastructure incident). A silent-vehicle threshold of 77 seconds (p99 + one poll interval) detects genuinely disconnected vehicles while accounting for the poll cycle itself.</p><h3>Stale telemetry</h3><p>A 10-minute system-wide incident (17:17 to 17:27 local) was identified through clustering analysis — multiple unrelated vehicles showing large gaps in the same minute window. The incident window was excluded from the baseline, reducing contaminated gaps from 12,107 to 1,808 clean entries.</p><h3>Spatial validation</h3><p>Position coordinates are checked against valid latitude/longitude bounds. Entities with coordinates outside [-90, 90] / [-180, 180] are rejected.</p><h3>Enrichment</h3><p>99.5% of pings carry a <code>stop ID</code> directly from the MBTA feed. A direct join against GTFS-static <code>stops.txt</code> provides stop names and coordinates with no inference required. The remaining 0.5% of null-stop pings concentrate entirely in Shuttle-Generic routes with no schedule data.</p><h3>Streaming delivery</h3><p>Kafka decouples the ingestion service from downstream consumers. The producer is idempotent, topics are created automatically, and the vehicle ID is used as the message key for partition affinity.</p><h2>Engineering Decisions</h2><h3>Why protobuf</h3><p>The MBTA feed is a binary GTFS-Realtime protobuf stream. Using the official <code>gtfs-realtime-bindings</code> library avoids hand-writing a decoder and gives correct parsing of the <code>FeedMessage</code> schema, including <code>VehiclePosition</code>, <code>TripUpdate</code>, and <code>Alert</code> entity types.</p><h3>Why Kafka</h3><p>Kafka provides durable, ordered event storage with consumer group semantics. The ingestion service publishes once and any number of downstream consumers (analytics, monitoring, API) can read independently. The 4-partition topic with vehicle-ID partitioning keeps each vehicle's events co-located.</p><h3>Why GTFS static data is needed</h3><p>GTFS-Realtime provides vehicle positions and trip references but not stop names, coordinates, or route short names. Joining against GTFS-static <code>stops.txt</code> and <code>routes.txt</code> turns opaque IDs into human-readable, geographically-grounded data. Without this enrichment, the telemetry is just a stream of coordinates with no context.</p><h3>Why DuckDB</h3><p>DuckDB handles the analytical queries (deduplication, gap analysis, distribution statistics, joins against GTFS-static CSVs) directly on the captured data without needing a full database server. It's used in Jupyter notebooks for exploration and baseline derivation.</p><h3>How validation works</h3><p>The validator checks each entity for: a present vehicle object, a present position with finite numeric coordinates within geographical bounds, a parseable timestamp, and a present vehicle ID. Entities failing any check are skipped and counted. Optional fields (bearing, speed, stop sequence, stop ID, status) are stored as null when absent rather than causing the entity to be skipped.</p><h3>How deduplication and temporal analysis work</h3><p>Deduplication uses <code>DISTINCT ON (vehicle ID, timestamp)</code> in DuckDB, keeping the most recent ingest of each duplicate pair. Gap analysis uses <code>LAG()</code> partitioned by vehicle to compute the time delta between consecutive pings. Silent vehicles are detected by comparing each vehicle's gap against a threshold derived from the p99 of movement-only gaps plus one poll interval.</p><h2>Metrics</h2><p>24,000 pings captured from Kafka (representative sample spanning at least two full poll cycles).</p><ul><li><b>22.4% duplication rate</b> — same vehicle, same timestamp reported multiple times within a poll cycle</li><li><b>Median gap between pings:</b> 16 seconds</li><li><b>p99 gap (movement only, incident excluded):</b> 62 seconds</li><li><b>Silent-vehicle threshold:</b> 77 seconds (p99 + 15s poll interval)</li><li><b>p95 feed latency:</b> ~46 seconds (MBTA reported timestamp to ingestion time)</li><li><b>99.5% stop ID coverage</b> — direct from MBTA feed, no inference needed</li><li><b>0.03% backwards stop-sequence jumps</b> — 6 instances out of 18,530 consecutive same-trip observations</li><li><b>10-minute infrastructure incident excluded</b> — reduced contaminated gaps from 12,107 to 1,808 clean baseline entries</li></ul><p>[METRIC NEEDED] — sustained throughput in records/sec under standard load. The poll cycle logs publish counts per cycle but a cumulative throughput measurement has not been published.</p><h2>Testing</h2><p>The ingestion service includes a Vitest test suite covering:</p><ul><li>Protobuf decoding correctness (real fixture + synthetic messages + garbage rejection)</li><li>Validation rule enforcement (coordinate bounds, NaN, undefined, missing vehicle ID, missing timestamp)</li><li>Kafka producer behavior (message shape, keys, agency ID injection, timestamp formatting, error propagation)</li><li>Poll cycle wiring (fetch, decode, validate, publish, failure propagation, logging)</li><li>Polling loop behavior (consecutive failure counting, backoff computation, recovery detection, alert threshold)</li></ul><h2>Technology Stack</h2><p><b>Ingestion & decoding:</b> TypeScript, Node.js</p><p><b>Stream transport:</b> Apache Kafka (KRaft mode, 4 partitions)</p><p><b>Analytics:</b> DuckDB, Python, Pandas, Jupyter</p><p><b>Containerization:</b> Docker, Docker Compose</p><p><b>Testing:</b> Vitest</p><p><b>Protocol:</b> GTFS-Realtime protobuf, GTFS-static CSV</p><h2>Repository</h2><p><a href="https://github.com/EderGtz/GTFS-Realtime-Stream-Engine">github.com/EderGtz/GTFS-Realtime-Stream-Engine</a></p></div></section>
+</main>
+  </body>
+</html>

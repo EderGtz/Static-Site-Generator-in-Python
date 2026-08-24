@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Eder Gutiérrez — Backend Engineer</title>
+    <meta name="description" content="Backend engineer building event-driven systems, integrations, and data-intensive applications." />
+    <link rel="canonical" href="https://edergtz.github.io/" />
+    <meta property="og:title" content="Eder Gutiérrez — Backend Engineer" />
+    <meta property="og:image" content="https://edergtz.github.io/og-image.png" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Eder Gutiérrez — Backend Engineer" />
+    <meta name="twitter:description" content="Backend engineer building event-driven systems, integrations, and data-intensive applications." />
+    <meta name="twitter:image" content="https://edergtz.github.io/og-image.png" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link href="/index.css" rel="stylesheet" />
+  </head>
+  <body>
+    <nav>
+      <div class="nav-left">
+        <a href="/">Home</a>
+        <a href="/projects">Projects</a>
+        <a href="/experience">Experience</a>
+        <a href="/contact">Contact</a>
+      </div>
+      <div class="nav-right">
+        <a href="https://github.com/EderGtz">GitHub</a>
+        <a href="/resume/Eder_Gutierrez_Resume.pdf">Resume</a>
+      </div>
+    </nav>
+    <main><section class="slot hero"><div><h1>Eder Gutiérrez</h1><div class="role">Backend Engineer</div><p class="tagline">I build event-driven systems, backend integrations, and data pipelines where data moves between services and correctness matters: Kafka-backed telemetry, bidirectional synchronization, and high-volume ETL.</p>
+<div class="cta-row">
+  <a class="primary" href="/projects">View selected work</a>
+  <a class="primary" href="https://github.com/EderGtz">GitHub</a>
+  <a class="primary" href="/resume/Eder_Gutierrez_Resume.pdf">Resume</a>
+</div></div></section>
+<section class="slot projects"><div><h2>Selected engineering work</h2><p>Systems, pipelines, and tools built to solve concrete engineering problems.</p><p><b>Flagship:</b> <a href="/projects/gtfs-realtime-stream-engine">GTFS Realtime Stream Engine</a></p><p><i>A real-time transit data pipeline that transforms raw vehicle telemetry into validated, enriched event streams.</i></p><p>Consumes the MBTA's raw binary <b>GTFS-Realtime VehiclePositions</b> protobuf feed on a 15-second interval. Decodes the binary payload, validates telemetry integrity, enriches each ping against GTFS-static stop/trip metadata, and publishes normalized JSON events to <b>Apache Kafka</b>. Downstream DuckDB analytics perform deduplication, data-quality scoring, and temporal validation of schedule adherence.</p><pre><code>┌─────────────┐   ┌──────────────────┐   ┌───────────────┐   ┌────────────────┐
+│   INPUT     │   │   PROCESSING     │   │   STREAMING   │   │   ANALYTICS    │
+├─────────────┤   ├──────────────────┤   ├───────────────┤   ├────────────────┤
+│ MBTA Feed   │──→│ Protobuf Decoder │──→│ Kafka Producer│──→│  DuckDB        │
+│ .pb payload │   │ gtfs-realtime    │   │ raw.vehicle   │   │  deduplication │
+│ 15s poll    │   │ bindings         │   │ -positions    │   │  data quality  │
+└─────────────┘   │ TypeScript/Node  │   │ 4 partitions  │   │  temporal val  │
+                  └──────────────────┘   │ KRaft mode    │   └────────────────┘
+                                         └───────────────┘
+</code></pre><p>[TypeScript] [Apache Kafka] [DuckDB] [Protobuf] [GTFS] [Docker] [Vitest]</p><p><a href="https://github.com/EderGtz/GTFS-Realtime-Stream-Engine">Repository</a></p><p><a href="/projects/llm-agent">Autonomous AI Code Agent</a></p><p><i>An experimental CLI agent that uses an LLM with tool calling to read, write, and execute code in a sandboxed workspace.</i></p><p>A Python CLI that bridges a large language model to real filesystem operations. The agent receives a task, calls Gemini's function-calling API to decide which tool to invoke, executes the tool in a confined working directory, and feeds the result back into the loop — repeating until the model signals completion or an iteration cap is reached.</p><pre><code>USER TASK
+     │
+     ▼
+ ┌───────────────────────────────┐
+ │  LLM  Gemini API              │
+ │  function-calling enabled     │
+ │  iterative loop               │
+ │  memory of prior tool results │
+ └───────────────┬───────────────┘
+                 │ selects tool
+                 ▼
+        ┌──────────────────┐
+        │  TOOL SELECTION  │
+        │  read / write /   │
+        │  execute          │
+        └──────┬───────────┘
+               │
+               ▼
+        ┌────────────────────────┐
+        │ SANDBOX EXECUTION      │
+        │ working-directory      │
+        │ isolation              │
+        │ read file · write file │
+        │ run command · list dir │
+        └──────────┬─────────────┘
+                   │
+                   ▼
+              ┌──────────┐
+              │  RESULT  │
+              │ + prior  │
+              │ context  │
+              └────┬─────┘
+                   │
+        feedback ↺─┘
+configurable iteration cap prevents runaway loops
+</code></pre><p>[Python] [Gemini API] [Bash] [Git]</p><p><a href="https://github.com/EderGtz/LLM-Agent">Repository</a></p><p><b>From scratch:</b> <a href="/projects/ssg">Static Site Generator</a></p><p><i>A custom-built Python SSG — written from scratch to understand how tools like Jekyll and Hugo work under the hood.</i></p><p>Transforms a directory of Markdown files and static assets into a complete HTML website. The entire engine — block parsing, inline conversion, an intermediate TextNode representation, and a Composite-Pattern HTML node tree — was built from the ground up as a learning project. No third-party SSG libraries.</p><pre><code>Markdown Files        Block Parser        Inline Converter      TextNode IR       HTML Renderer        HTML output
+(content/)           (md-blocks.py)     (md-inline-          (textnode.py)     (htmlnode.py)       (docs/)
+                     ┌─────┐             converter.py)                        ┌──────┐
+                     │head-│             ┌──────────────┐                    │Leaf- │
+                     │ings │             │bold · italic │                    │Node ·│
+                     │lists │             │code · links  │                    │Parent│
+                     │code  │             │· images      │                    │Node   │
+                     │block-│             └──────────────┘                    │recursive
+                     │quotes│                                                        │rendering
+                     │parags│                                                        └──────┘
+                     └──┬───┘
+                        │
+                        ▼
+              recursive directory walk → mirrors source tree
+this portfolio is generated by the same SSG
+</code></pre><p>[Python] [unittest] [Regex] [Composite Pattern]</p><p><a href="https://github.com/EderGtz/SSG">Repository</a></p></div></section>
+<section class="slot experience"><div><h2>Professional experience</h2><p>My backend work sits at the intersection of data and backend engineering. I focus on the parts of a system that are invisible when they work and obvious when they don't: pipelines, integrations, event streams, and the failure handling that keeps them correct.</p><h3>Odoo ↔ TikTok Shop — Bidirectional Inventory Synchronization</h3><p><i>Wayakna · Backend & Integration Engineer (Internship) · Mérida, Yucatán · Jan–Jul 2026</i></p><p>Built the integration layer that keeps Odoo ERP inventory consistent with TikTok Shop stock on the other side. The hard part isn't moving data — it's making sure the two systems don't fight each other when both are trying to update the same record.</p><pre><code>     ┌─────────┐         ┌──────────────────┐         ┌────────────┐
+     │ Odoo    │◀───────▶│  Integration     │◀───────▶│ TikTok Shop│
+     │ ERP     │         │  Layer           │         │            │
+     │ inventory│        │  Kafka · HMAC-   │        │ inventory  │
+     │ source  │        │  SHA256 · retries│        │ consumer   │
+     └─────────┘         └──────────────────┘         └────────────┘
+bidirectional sync · convergence strategy (converges inbound polling over outbound pushes)
+HMAC-SHA256 signature verification on every payload
+</code></pre><p>* <b>HMAC-SHA256</b> signature verification for cryptographic validation of each payload * Real-time client updates consumed from multiple <b>Kafka</b> producers, routed to downstream systems by payload type * Bidirectional race conditions resolved with a convergence strategy that prioritizes inbound polling over outbound stock pushes * Warehouse cross-referencing system with isolated per-client execution loops — a single API failure never halts global sync * Diff-based change detection + persistent <b>MongoDB</b> TTL cache to reduce API calls * Generic HTTP retry utility with exponential backoff for 429 / 5xx handling</p><h3>Stream-Based ETL — SAT Tax Blacklist</h3><p><i>Wayakna · Backend & Integration Engineer (Internship)</i></p><p>A stream-based ETL pipeline processing SAT tax blacklist records from compressed archives — reading, transforming, validating, and loading into MongoDB without holding the whole dataset in memory.</p><pre><code>500K+ records processed     6,348 records/sec      51 MB peak memory
+─────────────────────────     ──────────────────      ─────────────────
+SAT tax blacklist,          measured throughput     footprint across
+compressed archives,        under standard load    the full 500K+
+end-to-end pipeline                                  record run
+</code></pre><pre><code>SOURCE DATA ──→ EXTRACTION ──→ TRANSFORMATION ──→ VALIDATION ──→ LOAD
+                                                        │
+                                                        ▼
+                                                  MongoDB · TTL cache
+</code></pre><p>The pipeline is deliberately memory-conscious: it processes records in streams rather than loading the full dataset, which is what keeps the peak footprint at 51 MB across 500K+ records. Diff-based change detection avoids re-sending records that haven't changed, and the MongoDB TTL cache gives repeated lookups a fast path.</p></div></section>
+<section class="slot capabilities"><div><h2>Technical capabilities</h2><p>Technologies grouped by what I use them for.</p><p>Not a proficiency grid. These are the tools that show up in the systems I build — grouped by the role they play.</p><p><b>Systems</b></p><p>Apache Kafka · RabbitMQ · Docker · Linux</p><p><b>Data</b></p><p>MongoDB · PostgreSQL · SQL</p><p><b>Backend</b></p><p>Python · TypeScript · JavaScript · REST APIs · ETL pipelines</p><p><b>Testing & delivery</b></p><p>Jest · GitHub Actions · Git · Vitest · unittest</p><p>The common thread is event-driven architecture: systems where components communicate through messages rather than direct calls, where failures are expected and handled rather than exceptional, and where correctness under load matters more than speed of first implementation.</p></div></section>
+<section class="slot about"><div><h2>About</h2><p>Backend engineer. Big Data coursework.</p><p>My background is in software engineering and Big Data, with a growing focus on backend systems, distributed computing, and data-intensive applications. I enjoy working on systems where correctness depends on how data moves, changes, and recovers across components.</p><p>Currently based in Mérida, Yucatán. Degree in progress at UVEG, additional backend/CS work through Boot.dev.</p><p><b>Education</b></p><p><b>B.S. in Software Engineering</b> — Big Data specialization Universidad Virtual del Estado de Guanajuato (UVEG) Coursework completed Jul 2026 · degree in progress</p><p>Core: Software Engineering, Data Structures, OOP, Database Design (SQL & NoSQL), Computer Networks, AI Fundamentals, Probability & Statistics. Big Data track: Distributed Computing, Data Analysis, Big Data Administration, NoSQL Database Systems.</p><p><b>Backend & Computer Science Engineering path</b> Boot.dev — Online Computer Science Academy · 2025–present</p><p>Distributed Systems & Networking: Pub/Sub Messaging (RabbitMQ), HTTP Servers & Clients (TypeScript), File Servers & CDNs (S3/CloudFront). CS Core: Advanced OOP & Functional Programming (Python), Algorithms & Data Structures, Docker Containerization, Deep Git Version Control, Linux Systems Administration.</p></div></section>
+<section class="slot contact"><div><h2>Contact</h2><p>Currently exploring backend and data engineering opportunities. If your team is working with data pipelines, API integrations, or stream processing, reach out.</p><p><a href="https://github.com/EderGtz">GitHub — EderGtz</a> · <a href="https://linkedin.com/in/edergutierrezc">LinkedIn</a> · <a href="mailto:gutierrezeder64@gmail.com">Email</a> · <a href="/resume/Eder_Gutierrez_Resume.pdf">Resume</a></p><p>Mérida, Yucatán — Mexico</p></div></section>
+</main>
+  </body>
+</html>

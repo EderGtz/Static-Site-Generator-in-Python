@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Projects — Eder Gutiérrez</title>
+    <meta name="description" content="Backend engineer building event-driven systems, integrations, and data-intensive applications." />
+    <link rel="canonical" href="https://edergtz.github.io/projects/" />
+    <meta property="og:title" content="Projects — Eder Gutiérrez" />
+    <meta property="og:image" content="" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Projects — Eder Gutiérrez" />
+    <meta name="twitter:description" content="Backend engineer building event-driven systems, integrations, and data-intensive applications." />
+    <meta name="twitter:image" content="" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link href="/index.css" rel="stylesheet" />
+  </head>
+  <body>
+    <nav>
+      <div class="nav-left">
+        <a href="/">Home</a>
+        <a href="/projects">Projects</a>
+        <a href="/experience">Experience</a>
+        <a href="/contact">Contact</a>
+      </div>
+      <div class="nav-right">
+        <a href="https://github.com/EderGtz">GitHub</a>
+        <a href="/resume/Eder_Gutierrez_Resume.pdf">Resume</a>
+      </div>
+    </nav>
+    <main><section class="slot default"><div><h1>Projects</h1><p><a href="/">< Back Home</a></p><p>A selection of systems, tools, and data projects built to solve concrete engineering problems.</p><h2><a href="/projects/gtfs-realtime-stream-engine">GTFS-Realtime Stream Engine</a></h2><p><b>Flagship — Tier 1.</b> Event-driven pipeline that decodes raw MBTA GTFS-Realtime vehicle-position protobufs, validates telemetry, and publishes normalized events to Apache Kafka. Enriches telemetry with GTFS stop metadata and uses DuckDB for deduplication, data-quality analysis, and temporal validation. Containerized with Docker and covered by Vitest tests for protobuf decoding, validation, polling, Kafka publishing, and topic setup.</p><p><b>Stack:</b> TypeScript, Python, Apache Kafka, DuckDB, Docker</p><p><a href="https://github.com/EderGtz/GTFS-Realtime-Stream-Engine">View on GitHub</a></p><hr /><h2><a href="/projects/llm-agent">Autonomous AI Code Agent CLI</a></h2><p><b>Tier 2 — Systems and tooling.</b> CLI agent leveraging Gemini's function-calling API to read, write, and execute files through an iterative tool-calling loop. Implements an iterative agent loop with tool dispatch, working-directory sandboxing, and configurable iteration limits to prevent runaway executions.</p><p><b>Stack:</b> Python, LLM APIs, Bash, Git</p><p><a href="https://github.com/EderGtz/LLM-Agent">View on GitHub</a></p><hr /><h2><a href="/projects/ssg">PyWeaver — Static Site Generator</a></h2><p><b>Tier 2 — Systems and tooling.</b> A from-scratch Python static site generator with a node-based HTML engine (Composite Pattern), custom Markdown parsing (block-level + inline syntax), recursive directory generation, and 71 unit tests. Built as part of the Boot.dev backend course to understand how static site generators work internally.</p><p>This portfolio is generated with the same SSG.</p><p><b>Stack:</b> Python, unittest, Regex</p><p><a href="https://github.com/EderGtz/SSG">View on GitHub</a></p><hr /><h2><a href="/projects/cipherhook">CipherHook (OS-Level File Encryption)</a></h2><p><b>Tier 3 — Earlier work.</b> Earlier work. An OS-level file encryption daemon built in Python. It uses watchdog to react to filesystem events and PyCryptodome to encrypt files using AES-256-EAX, with RSA-2048 used to wrap the symmetric session key.</p><p><b>Stack:</b> Python, Watchdog, PyCryptodome, AES-256-EAX, RSA-2048</p><p><a href="https://github.com/EderGtz/CipherHook-File-Encrypt">View on GitHub</a></p><hr /><h2><a href="/projects/recursiveForecast">RecursiveForecast (Python vs. R)</a></h2><p><b>Tier 3 — Academic / exploratory.</b> An analytical project comparing recursive forecasting models implemented in both Python and R. Developed as part of Reto 4 at UVEG, implements the Exponential Smoothing algorithm to predict 2020 values from historical 2015-2019 data across 10 economic indicators.</p><p><b>Stack:</b> Python, R, NumPy, Matplotlib, purrr</p><p><a href="https://github.com/EderGtz/RecursiveForecast---Python-vs.-R">View on GitHub</a></p><p><a href="https://github.com/EderGtz/RecursiveForecast---Python-vs.-R">View on GitHub</a></p></div></section>
+</main>
+  </body>
+</html>

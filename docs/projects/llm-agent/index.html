@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LLM Code Agent CLI</title>
+    <meta name="description" content="CLI agent leveraging Gemini's function-calling API to autonomously read, write, and execute files on a local filesystem — an experimental CLI coding agent." />
+    <link rel="canonical" href="https://edergtz.github.io/projects/llm-agent/" />
+    <meta property="og:title" content="LLM Code Agent CLI" />
+    <meta property="og:image" content="" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="LLM Code Agent CLI" />
+    <meta name="twitter:description" content="CLI agent leveraging Gemini's function-calling API to autonomously read, write, and execute files on a local filesystem — an experimental CLI coding agent." />
+    <meta name="twitter:image" content="" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link href="/index.css" rel="stylesheet" />
+  </head>
+  <body>
+    <nav>
+      <div class="nav-left">
+        <a href="/">Home</a>
+        <a href="/projects">Projects</a>
+        <a href="/experience">Experience</a>
+        <a href="/contact">Contact</a>
+      </div>
+      <div class="nav-right">
+        <a href="https://github.com/EderGtz">GitHub</a>
+        <a href="/resume/Eder_Gutierrez_Resume.pdf">Resume</a>
+      </div>
+    </nav>
+    <main><section class="slot default"><div><h1>LLM Code Agent CLI</h1><p><a href="/">< Back Home</a></p><p><a href="/projects">< Projects</a></p><p>A command-line agent that leverages Google's Gemini model with function-calling capabilities to autonomously read, write, and execute files on a local filesystem — an experimental CLI coding agent.</p><h2>Overview</h2><p>LLM-Agent is a CLI-based autonomous agent that bridges the gap between large language models and real filesystem operations. It uses Gemini's function-calling (tool-use) API to let the model decide which actions to take — reading files, writing code, running shell commands — within a sandboxed working directory.</p><p>The agent operates in an iterative loop: it receives a task, calls Gemini's API to select a tool, executes the tool in the sandbox, feeds the result back, and repeats until the model signals completion or an iteration cap is reached.</p><h2>Architecture</h2><p>The agent operates in an iterative loop:</p><pre><code>User Prompt
+    |
+    v
++-----------------------+
+|  LLM                  |
+|  Gemini API           |
+|  function-calling     |
+|  enabled              |
+|  memory of prior      |
+|  tool results         |
++-----------------------+
+    |
+    v
++-----------------------+
+|  Tool Selection       |
+|  read / write /       |
+|  execute / list       |
++-----------------------+
+    |
+    v
++-----------------------+
+|  Sandbox Execution    |
+|  working-directory    |
+|  isolation            |
+|  read file            |
+|  write file           |
+|  run command          |
+|  list directory       |
++-----------------------+
+    |
+    v
++-----------------------+
+|  Result + prior       |
+|  context              |
++-----------------------+
+    |
+    feedback loop -->
+</code></pre><p>Each iteration:</p><ol><li>The model receives the user's prompt plus the results of previous tool calls.</li><li>The model selects a tool to call (read file, write file, execute command, etc.) with structured arguments.</li><li>The dispatcher executes the tool in the sandbox and returns the result.</li><li>The loop continues until the model signals completion or the iteration limit is reached.</li></ol><h2>Key Features</h2><h3>Function-Calling Integration</h3><p>Uses Gemini's native function-calling (tools) API so the model can request structured actions with typed parameters — file paths, content, shell commands — rather than producing free-form text that must be parsed.</p><h3>Tool Dispatch</h3><p>A registry of available tools the model can invoke:</p><ul><li><b>Read file</b> — retrieve file contents from the sandbox</li><li><b>Write file</b> — create or overwrite files with model-provided content</li><li><b>Execute command</b> — run shell commands within the working directory</li><li><b>List directory</b> — inspect the sandbox filesystem</li></ul><h3>Sandbox Isolation</h3><p>All file operations are confined to a configurable working directory. The agent cannot escape the sandbox, preventing accidental or malicious access to files outside the project scope.</p><h3>Iteration Limits</h3><p>A configurable maximum number of iterations prevents runaway agent loops. When the limit is reached, the agent stops and reports what it accomplished.</p><h3>Interactive and Scriptable Mode</h3><p>Can run interactively (prompt, agent, response) or in scripted mode for batch tasks.</p><h2>Interesting Engineering Constraints</h2><h3>Runaway execution</h3><p>Without an iteration cap, an agent loop could run indefinitely — the model might keep calling tools in a cycle that never converges. The configurable iteration limit is the primary safeguard: when the cap is reached, the agent stops and reports what it accomplished rather than continuing silently.</p><h3>Filesystem boundaries</h3><p>The sandbox is a working-directory isolation, not a full container or virtual machine. The agent is confined to a configurable directory for file operations, but the constraints are enforced in application code rather than by an external sandboxing layer. This is sufficient for a CLI tool operating on a local workspace, but it is not a security boundary for untrusted models or adversarial prompts.</p><h3>Tool failures</h3><p>When a tool fails — a file does not exist, a command returns a non-zero exit code, the working directory is inaccessible — the error is returned to the model as the tool result. The model sees the failure and can decide to try a different approach, but the agent does not have built-in recovery logic beyond what the model itself generates.</p><h3>Context management</h3><p>Each iteration appends the tool result to the conversation history. Over many iterations, the context grows. The agent does not implement summarization or context pruning — the full history of tool calls and results is passed back to the model each iteration. For long-running tasks this becomes a practical limit, but for the typical scoped task (read a few files, write some code, run a command) it is not a constraint.</p><h3>No autonomous goal decomposition</h3><p>The agent does not break a user's task into subtasks on its own. It executes one tool at a time based on what the model selects. If the task requires multiple dependent steps, the model must handle the sequencing through the iterative loop — selecting a tool, seeing the result, then selecting the next tool.</p><h2>Technology Stack</h2><p><b>LLM:</b> Google Gemini (function-calling API)</p><p><b>Language:</b> Python</p><p><b>Shell glue:</b> Bash</p><p><b>Version control:</b> Git</p><h2>Use Cases</h2><ul><li>Automated code generation and file scaffolding from natural-language prompts</li><li>Exploratory codebase analysis ("read these files and summarize")</li><li>Self-contained task execution where the model plans and executes steps autonomously</li><li>Prototyping agentic workflows before committing to heavier frameworks</li></ul><h2>Repository</h2><p><a href="https://github.com/EderGtz/LLM-Agent">github.com/EderGtz/LLM-Agent</a></p></div></section>
+</main>
+  </body>
+</html>

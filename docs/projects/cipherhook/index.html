@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CipherHook — OS-Level File Encryption</title>
+    <meta name="description" content="Backend engineer building event-driven systems, integrations, and data-intensive applications." />
+    <link rel="canonical" href="https://edergtz.github.io/projects/cipherhook/" />
+    <meta property="og:title" content="CipherHook — OS-Level File Encryption" />
+    <meta property="og:image" content="" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="CipherHook — OS-Level File Encryption" />
+    <meta name="twitter:description" content="Backend engineer building event-driven systems, integrations, and data-intensive applications." />
+    <meta name="twitter:image" content="" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link href="/index.css" rel="stylesheet" />
+  </head>
+  <body>
+    <nav>
+      <div class="nav-left">
+        <a href="/">Home</a>
+        <a href="/projects">Projects</a>
+        <a href="/experience">Experience</a>
+        <a href="/contact">Contact</a>
+      </div>
+      <div class="nav-right">
+        <a href="https://github.com/EderGtz">GitHub</a>
+        <a href="/resume/Eder_Gutierrez_Resume.pdf">Resume</a>
+      </div>
+    </nav>
+    <main><section class="slot default"><div><p>description: An OS-level file encryption daemon built in Python, using watchdog to monitor directory events in real-time and hybrid AES-256-EAX + RSA-2048 cryptography to automatically secure files.</p><hr /><h1>CipherHook — OS-Level File Encryption</h1><p><a href="/">< Back Home</a></p><p><a href="/projects">< Projects</a></p><p>An OS-level file encryption daemon built in Python. It uses the <code>watchdog</code> library to monitor directory events in real-time and applies hybrid AES-256-EAX + RSA-2048 cryptography to automatically secure files the moment they are written.</p><h2>Overview</h2><p>CipherHook is an event-driven background service (daemon) that watches a directory tree and encrypts new files transparently. The primary goal is to combine the speed of symmetric encryption (AES) with the key-exchange security of asymmetric encryption (RSA), eliminating the performance bottleneck of RSA-only encryption and the key distribution problem of AES-only systems.</p><p>The system runs as a <code>watchdog</code> observer that triggers on file close events, encrypts the file in-place using a randomly generated session key, and then destroys the original plaintext. Encrypted files receive a <code>.ederLockAlgorithm</code> suffix to prevent re-encryption loops.</p><h2>Architecture</h2><pre><code>User creates file in watched directory
+           |
+           v
++-----------------------------+
+|  Watchdog Observer          |
+|  (FileSystemEventHandler)   |
+|  triggers on-closed event   |
++-----------------------------+
+           |
+           v
++-----------------------------+
+|  Encryption Engine          |
+|  1. Generate random          |
+|     16-byte session key     |
+|  2. Compress with zlib      |
+|  3. AES-256-EAX encrypt     |
++-----------------------------+
+           |
+           v
++-----------------------------+
+|  RSA Key Wrapper            |
+|  Encrypt session key with   |
+|  RSA-2048 public key        |
++-----------------------------+
+           |
+           v
++-----------------------------+
+|  Payload Packaging          |
+|  Concatenate:                |
+|  - encrypted session key    |
+|  - AES nonce (16 bytes)     |
+|  - AES authenticity tag     |
+|  - encrypted content        |
+|  Encode as Base64           |
++-----------------------------+
+           |
+           v
++-----------------------------+
+|  Secure Write               |
+|  Write .ederLockAlgorithm   |
+|  file, unlink() original    |
++-----------------------------+
+</code></pre><h2>Hybrid Cryptography Design</h2><p>The encryption workflow combines two algorithms to get the best of both:</p><ol><li><b>AES-256-EAX (symmetric):</b> A random 16-byte session key is generated for each file. The file content is compressed with <code>zlib</code> and encrypted with AES in EAX mode, which provides both confidentiality and authenticity (the tag verifies the data wasn't tampered with).</li></ol><p>2. <b>RSA-2048 (asymmetric):</b> The session key itself is encrypted with the RSA public key. To decrypt a file you need the RSA private key -- without it, the AES session key cannot be recovered and the file stays locked.</p><p>The final payload is: <code>encrypted session key + nonce + tag + encrypted content</code>, all Base64-encoded for portability.</p><h2>Key Components</h2><h3>Watchdog File Monitor</h3><p>Uses Python's watchdog library with an Observer and a custom FileSystemEventHandler. The on-closed event is the trigger -- it fires when a file is closed after being written, ensuring the file is complete before encryption starts.</p><p>A custom suffix filter (<code>.ederLockAlgorithm</code>) prevents the daemon from trying to encrypt files that are already encrypted, avoiding infinite loops.</p><h3>Encryption Engine</h3><p>The <code>encrypt()</code> function: - Reads the plaintext file - Compresses it with <code>zlib</code> - Generates a fresh 16-byte AES session key via get<i>random</i>bytes - Encrypts the compressed data with AES-256-EAX - Encrypts the session key with RSA-2048 public key - Packages everything into a Base64 payload</p><h3>Decryption Engine</h3><p>The <code>decrypt()</code> function reverses the process: - Reads the <code>.ederLockAlgorithm</code> file - Decodes the Base64 payload - Extracts the RSA-encrypted session key (size determined by RSA key length) - Extracts the 16-byte nonce and 16-byte tag - Decrypts the session key with the RSA private key - Decrypts the content with AES-EAX using the recovered session key - Decompresses with <code>zlib</code> to recover the original plaintext</p><h3>Secure deletion policy</h3><p>After successful encryption, the original plaintext file is removed via <code>path.unlink()</code>. This removes the plaintext copy from disk after the daemon processes a file — it is an application-level cleanup, not a low-level wipe that overwrites disk blocks.</p><p>CipherHook is an educational exploration of hybrid file encryption rather than a production-grade secure deletion system.</p><h3>Audit Logging</h3><p>All encryption and decryption events are logged to <code>system.log</code> with timestamps, severity levels, and descriptive messages. This provides a traceable audit trail for compliance and debugging.</p><h2>Technology Stack</h2><p><b>Language:</b> Python 3.x</p><p><b>Cryptography:</b> PyCryptodome (RSA-2048, AES-256-EAX)</p><p><b>File monitoring:</b> Watchdog (event-driven filesystem observer)</p><p><b>Path handling:</b> Pathlib (cross-platform file path manipulation)</p><p><b>Compression:</b> Zlib (pre-encryption compression to reduce storage)</p><p><b>Logging:</b> Python logging module (audit trail)</p><h2>Installation and Usage</h2><h3>Prerequisites</h3><ul><li>Python 3.10 or higher</li><li>Pip (Python package manager)</li></ul><h3>Setup</h3><p>Create and activate a virtual environment:</p><pre><code>python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+</code></pre><h3>Running the Daemon</h3><p>Launch the main script:</p><pre><code>python main.py
+</code></pre><p>The daemon generates RSA key pairs on first run (if they don't exist) and then starts monitoring the configured directory. Follow the on-screen prompts to configure the watched directory and encryption/decryption mode.</p><h2>Repository</h2><p><a href="https://github.com/EderGtz/CipherHook-File-Encrypt">github.com/EderGtz/CipherHook-File-Encrypt</a></p><h2>Date</h2><p>February 24, 2026</p></div></section>
+</main>
+  </body>
+</html>
