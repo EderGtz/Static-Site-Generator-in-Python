@@ -4,15 +4,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Static Site Generator (SSG)</title>
-    <link href="/Static-Site-Generator-in-Python/index.css" rel="stylesheet" />
+    <link href="/index.css" rel="stylesheet" />
   </head>
   <body>
     <nav>
-      <a href="/Static-Site-Generator-in-Python/">Home</a>
-      <a href="/Static-Site-Generator-in-Python/projects">Projects</a>
-      <a href="/Static-Site-Generator-in-Python/contact">Contact</a>
+      <a href="/">Home</a>
+      <a href="/projects">Projects</a>
+      <a href="/contact">Contact</a>
     </nav>
-    <main><div><h1>Static Site Generator (SSG)</h1><p><a href="/Static-Site-Generator-in-Python/">< Back Home</a></p><p><a href="/Static-Site-Generator-in-Python/projects">< Projects</a></p><p>A custom-built static site generator written in Python from scratch. No third-party SSG libraries. Built to deeply understand how tools like Jekyll, Hugo, and Gatsby work under the hood.</p><h2>Overview</h2><p>SSG is a pure-Python static site generator that transforms a directory of Markdown files and static assets into a complete HTML website. The entire engine — from the internal node representation to the Markdown parsing logic — was built from the ground up as a learning project for the Boot.dev backend course.</p><h2>Pipeline</h2><p>The engine follows a linear data transformation pipeline with strict separation of concerns:</p><pre><code>Markdown Files
+    <main><div><h1>Static Site Generator (SSG)</h1><p><a href="/">< Back Home</a></p><p><a href="/projects">< Projects</a></p><p>A custom-built static site generator written in Python from scratch. No third-party SSG libraries. Built to deeply understand how tools like Jekyll, Hugo, and Gatsby work under the hood.</p><h2>Overview</h2><p>SSG is a pure-Python static site generator that transforms a directory of Markdown files and static assets into a complete HTML website. The entire engine — from the internal node representation to the Markdown parsing logic — was built from the ground up as a learning project for the Boot.dev backend course.</p><h2>Pipeline</h2><p>The engine follows a linear data transformation pipeline with strict separation of concerns:</p><pre><code>Markdown Files
       |
       v
 Block Parser (md_blocks.py)
@@ -65,6 +65,6 @@ docs/ (output)
 </code></pre><p>Or use the shell wrapper:</p><pre><code>./main.sh
 </code></pre><p>Serve the output locally:</p><pre><code>cd docs && python3 -m http.server 8888
 </code></pre><p>The generator accepts an optional basepath argument for deploying to subdirectories:</p><pre><code>python3 src/main.py /my-site/
-</code></pre><h2>Repository</h2><p><a href="https://github.com/EderGtz/SSG">github.com/EderGtz/SSG</a></p></div></main>
+</code></pre><h2>Repository</h2><p><a href="https://github.com/EderGtz/Static-Site-Generator-in-Python">github.com/EderGtz/SSG</a></p></div></main>
   </body>
 </html>

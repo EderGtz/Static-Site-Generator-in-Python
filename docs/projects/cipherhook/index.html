@@ -4,15 +4,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>CipherHook -- OS-Level File Encryption</title>
-    <link href="/Static-Site-Generator-in-Python/index.css" rel="stylesheet" />
+    <link href="/index.css" rel="stylesheet" />
   </head>
   <body>
     <nav>
-      <a href="/Static-Site-Generator-in-Python/">Home</a>
-      <a href="/Static-Site-Generator-in-Python/projects">Projects</a>
-      <a href="/Static-Site-Generator-in-Python/contact">Contact</a>
+      <a href="/">Home</a>
+      <a href="/projects">Projects</a>
+      <a href="/contact">Contact</a>
     </nav>
-    <main><div><h1>CipherHook -- OS-Level File Encryption</h1><p><a href="/Static-Site-Generator-in-Python/">< Back Home</a></p><p><a href="/Static-Site-Generator-in-Python/projects">< Projects</a></p><p>An OS-level file encryption daemon built in Python. It uses the <code>watchdog</code> library to monitor directory events in real-time and applies hybrid AES-256-EAX + RSA-2048 cryptography to automatically secure files the moment they are written.</p><h2>Overview</h2><p>CipherHook is an event-driven background service (daemon) that watches a directory tree and encrypts new files transparently. The primary goal is to combine the speed of symmetric encryption (AES) with the key-exchange security of asymmetric encryption (RSA), eliminating the performance bottleneck of RSA-only encryption and the key distribution problem of AES-only systems.</p><p>The system runs as a <code>watchdog</code> observer that triggers on file close events, encrypts the file in-place using a randomly generated session key, and then destroys the original plaintext. Encrypted files receive a <code>.ederLockAlgorithm</code> suffix to prevent re-encryption loops.</p><h2>Architecture</h2><pre><code>User creates file in watched directory
+    <main><div><h1>CipherHook -- OS-Level File Encryption</h1><p><a href="/">< Back Home</a></p><p><a href="/projects">< Projects</a></p><p>An OS-level file encryption daemon built in Python. It uses the <code>watchdog</code> library to monitor directory events in real-time and applies hybrid AES-256-EAX + RSA-2048 cryptography to automatically secure files the moment they are written.</p><h2>Overview</h2><p>CipherHook is an event-driven background service (daemon) that watches a directory tree and encrypts new files transparently. The primary goal is to combine the speed of symmetric encryption (AES) with the key-exchange security of asymmetric encryption (RSA), eliminating the performance bottleneck of RSA-only encryption and the key distribution problem of AES-only systems.</p><p>The system runs as a <code>watchdog</code> observer that triggers on file close events, encrypts the file in-place using a randomly generated session key, and then destroys the original plaintext. Encrypted files receive a <code>.ederLockAlgorithm</code> suffix to prevent re-encryption loops.</p><h2>Architecture</h2><pre><code>User creates file in watched directory
            |
            v
 +-----------------------------+

@@ -189,7 +189,7 @@ pre code {
   font-size: 0.85rem;
 }
 
-/* ===== Resume link on homepage ===== */
+/* ===== Resume link on homepage =====
 main p:has(a[href*="Eder_Gutierrez_Resume.pdf"]) {
   margin-top: 32px;
 }
@@ -219,7 +219,7 @@ main a[href*="Eder_Gutierrez_Resume.pdf"]:active {
   background-color: #1a1a1a;
   border-color: #2a2a2a;
   color: #ffffff !important;
-}
+} */
 
 /* ===== Horizontal Rule ===== */
 hr {

@@ -32,7 +32,7 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
             new_nodes.append(node)
             continue
         if len(parts) % 2 == 0:
-            raise Exception("Invalid md syntax. There is a delimiter missing")
+            raise Exception("Invalid md syntax. There is a delimiter missing at " + str(node))
         
         for i in range(len(parts)):
             if parts[i] == "":
