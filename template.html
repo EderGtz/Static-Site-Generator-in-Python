@@ -4,13 +4,30 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{{ Title }}</title>
+    <meta name="description" content="{{ Description }}" />
+    <link rel="canonical" href="{{ Canonical }}" />
+    <meta property="og:title" content="{{ Title }}" />
+    <meta property="og:image" content="{{ OgImage }}" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{ Title }}" />
+    <meta name="twitter:description" content="{{ Description }}" />
+    <meta name="twitter:image" content="{{ TwitterImage }}" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link href="/index.css" rel="stylesheet" />
   </head>
   <body>
     <nav>
-      <a href="/">Home</a>
-      <a href="/projects">Projects</a>
-      <a href="/contact">Contact</a>
+      <div class="nav-left">
+        <a href="/">Home</a>
+        <a href="/projects">Projects</a>
+        <a href="/experience">Experience</a>
+        <a href="/contact">Contact</a>
+      </div>
+      <div class="nav-right">
+        <a href="https://github.com/EderGtz">GitHub</a>
+        <a href="/resume/Eder_Gutierrez_Resume.pdf">Resume</a>
+      </div>
     </nav>
     <main>{{ Content }}</main>
   </body>

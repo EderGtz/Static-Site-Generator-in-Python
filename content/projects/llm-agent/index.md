@@ -1,10 +1,14 @@
-# LLM-Agent — Autonomous AI Code Agent CLI
+description: CLI agent leveraging Gemini's function-calling API to autonomously read, write, and execute files on a local filesystem — an experimental CLI coding agent.
+
+---
+
+# LLM Code Agent CLI
 
 [< Back Home](/)
 
 [< Projects](/projects)
 
-A command-line agent that leverages Google's Gemini model with function-calling capabilities to autonomously read, write, and execute files on a local filesystem — a self-contained AI coding assistant.
+A command-line agent that leverages Google's Gemini model with function-calling capabilities to autonomously read, write, and execute files on a local filesystem — an experimental CLI coding agent.
 
 ## Overview
 

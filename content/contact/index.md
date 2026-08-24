@@ -1,8 +1,12 @@
+---
+description: Contact — backend engineering opportunities in event-driven systems, integrations, and data-intensive applications.
+---
+
 # Contact Me
 
 [< Back Home](/)
 
-I'm currently exploring new opportunities as a Data/Backend Engineer. If your team is working with data pipelines, API integrations, or stream processing, let's connect.
+I'm looking for backend engineering opportunities involving event-driven systems, integrations, and data-intensive applications. If your team works with data pipelines, API integrations, or stream processing, let's connect.
 
 ## Email
 

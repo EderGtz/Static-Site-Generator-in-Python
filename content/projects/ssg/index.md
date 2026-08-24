@@ -1,3 +1,8 @@
+---
+title: Static Site Generator (SSG)
+description: Custom-built Python SSG with a node-based HTML engine (Composite Pattern), custom Markdown parsing (block-level + inline syntax), recursive directory generation, and 71 unit tests.
+---
+
 # Static Site Generator (SSG)
 
 [< Back Home](/)
@@ -82,7 +87,7 @@ Processes inline formatting within block text:
 - Italic (_text_)
 - Inline code (`code`)
 - Links
-- Images 
+- Images
 
 Uses an intermediate TextNode representation before converting to HTML nodes.
 
@@ -142,28 +147,30 @@ Tests ensure parsing accuracy and edge-case handling across the entire pipeline.
 
 Build the site from `content/` to `docs/`:
 
-```
+```bash
 python3 src/main.py
 ```
 
 Or use the shell wrapper:
 
-```
+```bash
 ./main.sh
 ```
 
 Serve the output locally:
 
-```
+```bash
 cd docs && python3 -m http.server 8888
 ```
 
 The generator accepts an optional basepath argument for deploying to subdirectories:
 
-```
+```bash
 python3 src/main.py /my-site/
 ```
 
 ## Repository
 
 [github.com/EderGtz/SSG](https://github.com/EderGtz/Static-Site-Generator-in-Python)
+
+This portfolio is generated with the same SSG.

@@ -1,4 +1,8 @@
-# CipherHook -- OS-Level File Encryption
+description: An OS-level file encryption daemon built in Python, using watchdog to monitor directory events in real-time and hybrid AES-256-EAX + RSA-2048 cryptography to automatically secure files.
+
+---
+
+# CipherHook — OS-Level File Encryption
 
 [< Back Home](/)
 
@@ -98,9 +102,11 @@ The `decrypt()` function reverses the process:
 - Decrypts the content with AES-EAX using the recovered session key
 - Decompresses with `zlib` to recover the original plaintext
 
-### Secure Deletion Policy
+### Secure deletion policy
 
-After successful encryption, the original plaintext file is destroyed immediately via `path.unlink()`. This "secure deletion" policy ensures no plaintext copies linger on disk after the daemon processes a file.
+After successful encryption, the original plaintext file is removed via `path.unlink()`. This removes the plaintext copy from disk after the daemon processes a file — it is an application-level cleanup, not a low-level wipe that overwrites disk blocks.
+
+CipherHook is an educational exploration of hybrid file encryption rather than a production-grade secure deletion system.
 
 ### Audit Logging
 

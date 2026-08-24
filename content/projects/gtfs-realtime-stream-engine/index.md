@@ -1,3 +1,7 @@
+description: Event-driven pipeline that decodes raw MBTA GTFS-Realtime vehicle-position protobufs, validates telemetry, and publishes normalized events to Apache Kafka. Enriches telemetry with GTFS stop metadata and uses DuckDB for deduplication, data-quality analysis, and temporal validation.
+
+---
+
 # GTFS-Realtime Stream Engine
 
 [< Back Home](/)

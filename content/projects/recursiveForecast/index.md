@@ -1,4 +1,8 @@
-# RecursiveForecast -- Python vs. R Comparative Study
+description: An analytical project comparing recursive forecasting models implemented in both Python and R, using exponential smoothing across 10 economic indicators.
+
+---
+
+# RecursiveForecast — Python vs. R Comparative Study
 
 [< Back Home](/)
 
