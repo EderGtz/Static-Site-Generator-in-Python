@@ -31,7 +31,7 @@ User creates file in watched directory
            v
 +-----------------------------+
 |  Encryption Engine          |
-|  1. Generate random          |
+|  1. Generate random         |
 |     16-byte session key     |
 |  2. Compress with zlib      |
 |  3. AES-256-EAX encrypt     |
@@ -47,7 +47,7 @@ User creates file in watched directory
            v
 +-----------------------------+
 |  Payload Packaging          |
-|  Concatenate:                |
+|  Concatenate:               |
 |  - encrypted session key    |
 |  - AES nonce (16 bytes)     |
 |  - AES authenticity tag     |

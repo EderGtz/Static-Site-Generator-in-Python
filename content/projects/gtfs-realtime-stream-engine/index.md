@@ -26,7 +26,7 @@ MBTA GTFS-Realtime Feed
 |  INPUT                |
 |  Protobuf Decoder     |
 |  (TypeScript)         |
-|  gtfs-realtime-      |
+|  gtfs-realtime-       |
 |  bindings             |
 +-----------------------+
        |
@@ -167,8 +167,6 @@ Deduplication uses `DISTINCT ON (vehicle ID, timestamp)` in DuckDB, keeping the 
 - **99.5% stop ID coverage** — direct from MBTA feed, no inference needed
 - **0.03% backwards stop-sequence jumps** — 6 instances out of 18,530 consecutive same-trip observations
 - **10-minute infrastructure incident excluded** — reduced contaminated gaps from 12,107 to 1,808 clean baseline entries
-
-[METRIC NEEDED] — sustained throughput in records/sec under standard load. The poll cycle logs publish counts per cycle but a cumulative throughput measurement has not been published.
 
 ## Testing
 

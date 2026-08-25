@@ -28,8 +28,8 @@ Two inventory systems of record, both able to update the same stock count, with 
      ┌─────────┐         ┌──────────────────┐         ┌────────────┐
      │ Odoo    │◀───────▶│  Integration     │◀───────▶│ TikTok Shop│
      │ ERP     │         │  Layer           │         │            │
-     │ inventory│        │  Kafka · HMAC-   │        │ inventory  │
-     │ source  │        │  SHA256 · retries│        │ consumer   │
+     │inventory│         │  Kafka · HMAC-   │         │ inventory  │
+     │ source  │         │  SHA256 · retries│         │ consumer   │
      └─────────┘         └──────────────────┘         └────────────┘
 ```
 

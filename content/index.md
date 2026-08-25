@@ -69,8 +69,8 @@ USER TASK
                  ▼
         ┌──────────────────┐
         │  TOOL SELECTION  │
-        │  read / write /   │
-        │  execute          │
+        │  read / write /  │
+        │  execute         │
         └──────┬───────────┘
                │
                ▼
@@ -106,14 +106,14 @@ Transforms a directory of Markdown files and static assets into a complete HTML 
 ```
 Markdown Files        Block Parser        Inline Converter      TextNode IR       HTML Renderer        HTML output
 (content/)           (md-blocks.py)     (md-inline-          (textnode.py)     (htmlnode.py)       (docs/)
-                     ┌─────┐             converter.py)                        ┌──────┐
-                     │head-│             ┌──────────────┐                    │Leaf- │
-                     │ings │             │bold · italic │                    │Node ·│
-                     │lists │             │code · links  │                    │Parent│
-                     │code  │             │· images      │                    │Node   │
-                     │block-│             └──────────────┘                    │recursive
-                     │quotes│                                                        │rendering
-                     │parags│                                                        └──────┘
+                     ┌──────┐             converter.py)                       ┌──────────┐
+                     │head- │             ┌──────────────┐                    │Leaf-     │
+                     │ings  │             │bold · italic │                    │Node ·    │
+                     │lists │             │code · links  │                    │Parent    │
+                     │code  │             │· images      │                    │Node      │
+                     │block-│             └──────────────┘                    │recursive │
+                     │quotes│                                                 │rendering │
+                     │parags│                                                 └──────────┘
                      └──┬───┘
                         │
                         ▼
@@ -141,8 +141,8 @@ Built the integration layer that keeps Odoo ERP inventory consistent with TikTok
      ┌─────────┐         ┌──────────────────┐         ┌────────────┐
      │ Odoo    │◀───────▶│  Integration     │◀───────▶│ TikTok Shop│
      │ ERP     │         │  Layer           │         │            │
-     │ inventory│        │  Kafka · HMAC-   │        │ inventory  │
-     │ source  │        │  SHA256 · retries│        │ consumer   │
+     │inventory│         │  Kafka · HMAC-   │         │ inventory  │
+     │ source  │         │  SHA256 · retries│         │ consumer   │
      └─────────┘         └──────────────────┘         └────────────┘
 bidirectional sync · convergence strategy (converges inbound polling over outbound pushes)
 HMAC-SHA256 signature verification on every payload
@@ -175,6 +175,16 @@ The pipeline is deliberately memory-conscious: it processes records in streams r
 
 <!-- section: capabilities -->
 
+## Engineering principles
+
+* **Reliability** — retries, backoff, failure isolation.
+
+* **Consistency** — idempotency, convergence, diff-based updates.
+
+* **Observability** — metrics, validation, data-quality checks.
+
+* **Performance** — streaming, batching, memory-conscious processing.
+
 ## Technical capabilities
 
 Technologies grouped by what I use them for.
@@ -203,11 +213,11 @@ The common thread is event-driven architecture: systems where components communi
 
 ## About
 
-Backend engineer. Big Data coursework.
+I'm a backend engineer focused on systems where data has to move reliably between services. My work sits around backend development, data pipelines, event-driven systems, and integrations; particularly the problems that appear when data needs to be validated, synchronized, retried, and recovered without losing consistency.
 
-My background is in software engineering and Big Data, with a growing focus on backend systems, distributed computing, and data-intensive applications. I enjoy working on systems where correctness depends on how data moves, changes, and recovers across components.
+I enjoy understanding what happens beneath the API: how services communicate, how failures propagate, how data changes over time, and how systems behave when things don't go according to plan. Most of the projects I build are an excuse to explore those problems in practice, whether that's processing real-time transit telemetry, building event-driven integrations, or implementing a static site generator from scratch.
 
-Currently based in Mérida, Yucatán. Degree in progress at UVEG, additional backend/CS work through Boot.dev.
+I'm currently based in Mérida, Yucatán. I'm completing a B.S. in Software Engineering at UVEG with a Big Data specialization, while continuing my backend and computer science training through Boot.dev.
 
 **Education**
 
